@@ -1,0 +1,24 @@
+varnames,varnames_long,varnames_long_indented
+distance,Propensity score,~~~Propensity score
+election,Election,~~~Election
+visit_10km,Hitler appearance,~~~Hitler appearance
+l_p_nsdap,Previous NSDAP vote share,~~~Previous NSDAP vote share
+wbht,Number of eligibles,~~~Number of eligibles
+wbht2,Number of eligibles squared,~~~Number of eligibles squared
+wbht3,Number of eligibles cubic,~~~Number of eligibles cubic
+lwb,Log number of eligibles,~~~Log number of eligibles
+members_perc,Organizational strength,~~~Organizational strength
+memberst,NSDAP members,~~~NSDAP members
+wkr_comp_curr,Competitiveness 1,~~~Competitiveness 1
+wkr_comp_last,Competitiveness 1,~~~Competitiveness 1
+wkv_comp_last,Competitiveness 2,~~~Competitiveness 2
+airfields_dist_min100km,Distance to nearest airfield,~~~Distance to nearest airfield
+l_visit_10km,Previous appearance,~~~Previous appearance
+visit_10km_nomatch,Observation in no-matching zone,~~~Observation in no-matching zone
+l_visit_10km_comm,Previous appearance,~~~Previous appearance
+l_p_nsdap_comm,Previous NSDAP vote share,~~~Previous NSDAP vote share
+l_p_turnout_comm,Previous turnout,~~~Previous turnout
+l_p_hitl,Previous Hitler vote share,~~~Previous Hitler vote share
+goebbels_10km,Goebbels appearance,~~~Goebbels appearance
+goebbels_10kmTRUE,Goebbels appearance,~~~Goebbels appearance
+goebbels_10kmFALSE,No Goebbels appearance,~~~No Goebbels appearance
