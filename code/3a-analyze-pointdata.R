@@ -246,13 +246,8 @@ tab_list <- list(tab_list[[1]], tab_list[[6]], tab_list[[5]], tab_list[[2]], tab
 tab_tex <- do.call("cbind.fill", c(list(fill = ""), tab_list))
 
 # fix pres election variables issue
-tab_tex[7,9:11] <- tab_tex[5,9:11]
-tab_tex[8,9:11] <- tab_tex[6,9:11]
-tab_tex[9,9:11] <- tab_tex[7,9:11]
-tab_tex[10,9:11] <- tab_tex[8,9:11]
-tab_tex[11,9:11] <- tab_tex[9,9:11]
-tab_tex[5,9:11] <- ""
-tab_tex[6,9:11] <- ""
+tab_tex[4:11,9:11] <- tab_tex[2:9,9:11]
+tab_tex[2:3,9:11] <- ""
 tab_tex <- tab_tex[,-c(4,8,12,16,20,24)]
 
 # apply new varnames
@@ -261,7 +256,7 @@ rownames(tab_tex) <- get_varnames
 
 # drop line with exact matching variable
 tab_tex <- tab_tex[rownames(tab_tex)!= "Observation in no-matching zone",]
-tab_tex <- tab_tex[rownames(tab_tex)!= "No Goebbels visit within 10km",]
+tab_tex <- tab_tex[rownames(tab_tex)!= "No Goebbels appearance",]
 
 # split table
 tab_tex1 <- tab_tex[,1:9]
@@ -286,10 +281,16 @@ addtorow2$command <- paste0(paste0(' & \\multicolumn{3}{c}{July 1932} &  \\multi
 
 # print tables
 cols_align <- c("l", "l", rep("r", ncol(tab_tex1)-1))
-print(xtable(tab_tex1, align = cols_align, digits=2, caption = "Propensity score and covariate balance before and after matching. Mean differences on variables reported.\\label{tab:balance1}"), booktabs = TRUE, size = "scriptsize", caption.placement = "top", table.placement = "t!", add.to.row=addtorow1,  include.rownames=TRUE, include.colnames = FALSE, sanitize.text.function = identity, file = "../figures/tab-balance1.tex")
+tab_tex1 <- sapply(tab_tex1, function(x) num(char(x))) 
+rownames(tab_tex1) <- rownames(tab_tex)
+xtab1 <- xtable(tab_tex1, digits = c(0,rep(c(2,2,0), 3)), align = cols_align, caption = "Propensity score and covariate balance before and after matching. Mean differences on variables reported.\\label{tab:balance1}")
+print(xtab1, booktabs = TRUE, size = "scriptsize", caption.placement = "top", table.placement = "t!", add.to.row=addtorow1,  include.rownames=TRUE, include.colnames = FALSE, sanitize.text.function = identity, file = "../figures/tab-balance1.tex")
 
 cols_align <- c("l", "l", rep("r", ncol(tab_tex2)-1))
-print(xtable(tab_tex2, align = cols_align, digits=2, caption = "Propensity score and covariate balance before and after matching, \\textit{continued}. Mean differences on variables reported.\\label{tab:balance2}"), booktabs = TRUE, size = "scriptsize", caption.placement = "top", table.placement = "t!", add.to.row=addtorow2,  include.rownames=TRUE, include.colnames = FALSE, sanitize.text.function = identity, file = "../figures/tab-balance2.tex")
+tab_tex2 <- sapply(tab_tex2, function(x) num(char(x))) 
+rownames(tab_tex2) <- rownames(tab_tex)
+xtab2 <- xtable(tab_tex2, digits = c(0,rep(c(2,2,0), 3)), align = cols_align, caption = "Propensity score and covariate balance before and after matching, \\textit{continued}. Mean differences on variables reported.\\label{tab:balance2}")
+print(xtab2, booktabs = TRUE, size = "scriptsize", caption.placement = "top", table.placement = "t!", add.to.row=addtorow2,  include.rownames=TRUE, include.colnames = FALSE, sanitize.text.function = identity, file = "../figures/tab-balance2.tex")
 
 
 
