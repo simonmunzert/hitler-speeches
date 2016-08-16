@@ -4,6 +4,7 @@ This repository provides replication materials for the paper "Examining a Most L
 
 ## Paper
 The current version of the corresponding working paper can be accessed here:
+https://github.com/simonmunzert/hitler-speeches/raw/master/SelbMunzert_Hitler_Speeches.pdf
 
 
 
