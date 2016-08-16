@@ -13,11 +13,11 @@ Given the devastating historical consequences, Hitler’s rise to power amidst a
 
 ## Preview of results
 
-![Summary statistics for public speeches and audience counts](teaser_img/hitler_audience.png =400x)
+![Summary statistics for public speeches and audience counts](teaser_img/hitler_audience.png)
 
-![Probit estimates of Hitler appearances by election](teaser_img/hitler_probit.png =400x)
+![Probit estimates of Hitler appearances by election](teaser_img/hitler_probit.png)
 
-![Diff-in-diff estimates of exposure effects on NSDAP (Hitler) vote shares, KPD /Thälmann) vote shares, and turnout in national parliamentary and presidential elections 1930--33](teaser_img/hitler_probit.png =400x)
+![Diff-in-diff estimates of exposure effects on NSDAP (Hitler) vote shares, KPD /Thälmann) vote shares, and turnout in national parliamentary and presidential elections 1930--33](teaser_img/hitler_probit.png)
 
 
 
