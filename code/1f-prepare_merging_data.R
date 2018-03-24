@@ -18,8 +18,7 @@ c("data_geopoints/geopoints_df_cleaned.csv",
 
 ## exports
 c("elections_geopoints_df.RData",
-  "elections_geopoints_spdf.RData",
-  "elections_geopoints_df.dta")
+  "elections_geopoints_spdf.RData")
 
 
 
@@ -33,6 +32,35 @@ source("functions.r")
 # import Reichstag election data
 elections_df <- read.dta("data_elections/ZA8013_Wahldaten.dta", convert.factors = TRUE)
 
+# import sociodemographic data
+demographics_df <- read.dta("data_elections/ZA8013_Sozialdaten.dta", convert.factors = TRUE)
+demographics_df[demographics_df == -9] <- NA
+
+# share of people employed in agriculture, 1925 census
+demographics_df$landw25 <- (demographics_df$c25lselb + demographics_df$c25lgewb + demographics_df$c25langs + demographics_df$c25larb + demographics_df$c25lmith) / demographics_df$c25wohn
+
+# share of people employed in agriculture, 1933 census
+demographics_df$landw33 <- demographics_df$c33lv / demographics_df$c33pop2
+# demographics_df$landw33 <- demographics_df$c33land / demographics_df$c33erwp # alternative measure, less coverage
+
+# share of unemployed people, 1933 census
+demographics_df$alos33 <- (demographics_df$c33eloan + demographics_df$c33eloar + demographics_df$c33eloha) / demographics_df$c33erwp
+
+# share of workers, 1925 census
+demographics_df$arbei25 <- demographics_df$c25arbei / demographics_df$c25wohn
+
+# share of workers, 1933 census
+demographics_df$arbei33 <- demographics_df$c33arbei / demographics_df$c33erwp 
+
+# share of protestants, 1925 census
+demographics_df$prot25 <- demographics_df$c25prot / demographics_df$c25pop
+demographics_df$prot25[demographics_df$prot25 > 1] <- 1
+
+
+keeps <- c("lfnr", "landw25", "landw33", "alos33", "prot25", "arbei25", "arbei33")
+demographics_df <- demographics_df[keeps]
+elections_demographics_df <- merge(elections_df, demographics_df, by = "lfnr")
+
 # import Presidential election data
 elections_pres_df <- read.dta("data_elections/RPWABS_new.dta")
 vars <- names(elections_pres_df)[str_detect(names(elections_pres_df), "323|324|c25pop5")]
@@ -42,7 +70,9 @@ elections_pres_df <- elections_pres_df[,vars]
 elections_pres_df <- elections_pres_df[!duplicated(elections_pres_df$c25pop5),]
 
 # merge by 1932 county population variables (county ID variables are messed up)
-elections_df <- merge(elections_df, elections_pres_df, all.x = TRUE, by.x = "n327pop", by.y = "c25pop5")
+elections_df <- merge(elections_demographics_df, elections_pres_df, all.x = TRUE, by.x = "n327pop", by.y = "c25pop5")
+
+
 
 
 ## merge election data with geographic data --------------------------
@@ -538,7 +568,9 @@ points(elections_geo_spdf[elections_geo_spdf$speech_may28_10km_nomatch==T,], pch
 														
 
 # create cumulative audience count and speeches count variables (note: speeches with unavailable count information are coded as missing. If one community is targeted by several speeches and at least one of the speeches has missing audience information, the variable is coded as missing)
+pb = txtProgressBar(min = 0, max = nrow(elections_geo_spdf), initial = 0, style = 3) 
 for (i in 1:nrow(elections_geo_spdf)) {
+  setTxtProgressBar(pb,i)
   # 1928, full period
   mindist <- rdist.earth(coordinates(cbind(speeches_df_may28$lon, speeches_df_may28$lat)), coordinates(elections_sp[i]), miles = FALSE, R = 6378)
   elections_geo_spdf$audience_count_may28_5km[i] <-  mindist %>% is_less_than(5) %>% as.vector %>% speeches_df_may28[.,] %>% use_series(audience_police_num_imputed) %>% sum(na.rm = TRUE)#  %>% recode("0 = NA")
@@ -927,7 +959,7 @@ goebbels_df_apr32_8w <- filter(goebbels_df, date > ymd("1932-04-10") - weeks(8),
 goebbels_df_apr32_12w <- filter(goebbels_df, date > ymd("1932-04-10") - weeks(12), date < "1932-04-10")
 
 
-# generate goebbels indicator in community-level data ("did hitler give a goebbels near the community (within 5km, 10km, 25km, 50km) in a given time period (full period, 2, 4, 8, 12 weeks before the election?")
+# generate goebbels indicator in community-level data ("did goebbels give a speech near the community (within 5km, 10km, 25km, 50km) in a given time period (full period, 2, 4, 8, 12 weeks before the election?")
 
 # 1928, full period
 mindist <- rdist.earth(coordinates(cbind(goebbels_df_may28$lon, goebbels_df_may28$lat)), coordinates(elections_sp), miles = FALSE, R = 6378) %>% apply(2, min)
@@ -1310,10 +1342,9 @@ elections_geo_spdf$goebbels_apr32_12w_50km_nomatch <- mindist > 50 & mindist < 6
 
 # check if generated variables are plausible
 plot(elections_geo_spdf, cex = .3, col = "grey")
-points(elections_geo_spdf[elections_geo_spdf$goebbels_may28_10km==T,], pch = 20, col = "red", cex = 1)
-points(goebbels_df_may28$lon, goebbels_df_may28$lat, pch = 20, col = "green")
-points(elections_geo_spdf[elections_geo_spdf$goebbels_may28_10km_nomatch==T,], pch = 20, col = "blue")
-
+points(elections_geo_spdf[elections_geo_spdf$goebbels_jul32_10km == T,], pch = 20, col = "red", cex = 1) # units exposed to Goebbels speeches
+points(goebbels_df_jul32$lon, goebbels_df_jul32$lat, pch = 20, col = "green") # Goebbels speech locations
+points(elections_geo_spdf[elections_geo_spdf$goebbels_jul32_10km_nomatch==T,], pch = 20, col = "blue") # no matching zone
 
 
 
@@ -1332,7 +1363,3 @@ elections_geo_df <- as.data.frame(elections_geo_spdf)
 # RData export
 save(elections_geo_df, file = "elections_geopoints_df.RData")
 save(elections_geo_spdf, file = "elections_geopoints_spdf.RData")
-
-
-# Stata export
-write.dta(elections_geo_df, file = "elections_geopoints_df.dta", version = 10)

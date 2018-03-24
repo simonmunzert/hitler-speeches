@@ -8,7 +8,7 @@ wbht2,Number of eligibles squared,~~~Number of eligibles squared
 wbht3,Number of eligibles cubic,~~~Number of eligibles cubic
 lwb,Log number of eligibles,~~~Log number of eligibles
 members_perc,Organizational strength,~~~Organizational strength
-memberst,NSDAP members,~~~NSDAP members
+memberst,Organizational strength,~~~Organizational strength
 wkr_comp_curr,Competitiveness 1,~~~Competitiveness 1
 wkr_comp_last,Competitiveness 1,~~~Competitiveness 1
 wkv_comp_last,Competitiveness 2,~~~Competitiveness 2

@@ -39,8 +39,9 @@ performMatch <- function(treat.var, dat.raw, electiontype = c("county", "pres", 
                        method = "nearest", 
                        m.order = "random",
                        ratio = 1,
-                       replace = TRUE,
-                       discard = "both",
+                       caliper = .25,
+                       replace = FALSE,
+                       discard = "none",
                        exact = c(paste0(treat.var, "_nomatch"), exactmatch),
                        distance = "probit") 
   match.data.out <- match.data(model.out)
@@ -109,11 +110,15 @@ getDatMatch <- function(dat.match, dat.orig, election, treatment){
   dat_match_0$distance <- NA
   dat_match_0$weights <- NA
   dat_match_full <- rbind.fill(dat_match, dat_match_0)
+  single_obs <- dat_match_full$lfnr[table(dat_match_full$lfnr) == 1]
+  dat_match_full <- filter(dat_match_full, !(lfnr %in% single_obs)) # drop single case observations (i.e.)
+  dat_match_full$weights <- rep(dat_match_full$weights[!is.na(dat_match_full$weights)], 2)
   dat_match_full$time <- ifelse(dat_match_full$election == election, 1, 0)
   dat_match_full$exposure <- ifelse(dat_match_full$lfnr %in% dat_match_full$lfnr[dat_match_full[,treatment] & dat_match_full$time ==1], 1, 0)
   dat_match_full$timeXexposure <- dat_match_full$time * dat_match_full$exposure
   return(dat_match_full)
 }
+
 
 getCoef <- function(model) {
   model <- get(model)

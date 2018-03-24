@@ -27,7 +27,6 @@ load("county_pres_df_pointdata_long.RData")
 load("community_df_pointdata_long.RData")
 
 
-
 ### geographic scope of events -----------------------------
 
 # model NSDAP vote share, 1930 election, municipal data
@@ -39,7 +38,8 @@ model_voteshare_comm_fullsample_simple_5km$clusterse <- runClusterRobustOLS(mode
 dat_raw <- community_df_long[community_df_long$election == 2,]
 dat_match <- performMatch("visit_5km", dat.raw = "dat_raw", electiontype = "community")
 dat_match <- getDatMatch(dat.match = "dat_match", dat.orig = "community_df_long", election = 2, treatment = "visit_5km")
-model_voteshare_comm_matched_simple_5km <- lm(model_voteshare_comm_formula_simple, data =  dat_match, weights = dat_match$gs)
+dat_match$combweights <- dat_match$gs  * dat_match$weights
+model_voteshare_comm_matched_simple_5km <- lm(model_voteshare_comm_formula_simple, data =  dat_match, weights = dat_match$combweights)
 model_voteshare_comm_matched_simple_5km$clusterse <- runClusterRobustOLS(model_voteshare_comm_matched_simple_5km, dat_match$lfnr)
 # 10km
 dat_full <- getDatFull("community_df_long", election = 2, treatment = "visit_10km")
@@ -48,7 +48,8 @@ model_voteshare_comm_fullsample_simple_10km$clusterse <- runClusterRobustOLS(mod
 dat_raw <- community_df_long[community_df_long$election == 2,]
 dat_match <- performMatch("visit_10km", dat.raw = "dat_raw", electiontype = "community")
 dat_match <- getDatMatch(dat.match = "dat_match", dat.orig = "community_df_long", election = 2, treatment = "visit_10km")
-model_voteshare_comm_matched_simple_10km <- lm(model_voteshare_comm_formula_simple, data =  dat_match, weights = dat_match$gs)
+dat_match$combweights <- dat_match$gs  * dat_match$weights
+model_voteshare_comm_matched_simple_10km <- lm(model_voteshare_comm_formula_simple, data =  dat_match, weights = dat_match$combweights)
 model_voteshare_comm_matched_simple_10km$clusterse <- runClusterRobustOLS(model_voteshare_comm_matched_simple_10km, dat_match$lfnr)
 # 25km
 dat_full <- getDatFull("community_df_long", election = 2, treatment = "visit_25km")
@@ -57,7 +58,8 @@ model_voteshare_comm_fullsample_simple_25km$clusterse <- runClusterRobustOLS(mod
 dat_raw <- community_df_long[community_df_long$election == 2,]
 dat_match <- performMatch("visit_25km", dat.raw = "dat_raw", electiontype = "community")
 dat_match <- getDatMatch(dat.match = "dat_match", dat.orig = "community_df_long", election = 2, treatment = "visit_25km")
-model_voteshare_comm_matched_simple_25km <- lm(model_voteshare_comm_formula_simple, data =  dat_match, weights = dat_match$gs)
+dat_match$combweights <- dat_match$gs  * dat_match$weights
+model_voteshare_comm_matched_simple_25km <- lm(model_voteshare_comm_formula_simple, data =  dat_match, weights = dat_match$combweights)
 model_voteshare_comm_matched_simple_25km$clusterse <- runClusterRobustOLS(model_voteshare_comm_matched_simple_25km, dat_match$lfnr)
 # 50km
 dat_full <- getDatFull("community_df_long", election = 2, treatment = "visit_50km")
@@ -66,7 +68,8 @@ model_voteshare_comm_fullsample_simple_50km$clusterse <- runClusterRobustOLS(mod
 dat_raw <- community_df_long[community_df_long$election == 2,]
 dat_match <- performMatch("visit_50km", dat.raw = "dat_raw", electiontype = "community")
 dat_match <- getDatMatch(dat.match = "dat_match", dat.orig = "community_df_long", election = 2, treatment = "visit_50km")
-model_voteshare_comm_matched_simple_50km <- lm(model_voteshare_comm_formula_simple, data =  dat_match, weights = dat_match$gs)
+dat_match$combweights <- dat_match$gs  * dat_match$weights
+model_voteshare_comm_matched_simple_50km <- lm(model_voteshare_comm_formula_simple, data =  dat_match, weights = dat_match$combweights)
 model_voteshare_comm_matched_simple_50km$clusterse <- runClusterRobustOLS(model_voteshare_comm_matched_simple_50km, dat_match$lfnr)
 
 
@@ -79,7 +82,8 @@ model_voteshare_kpd_comm_fullsample_simple_5km$clusterse <- runClusterRobustOLS(
 dat_raw <- community_df_long[community_df_long$election == 2,]
 dat_match <- performMatch("visit_5km", dat.raw = "dat_raw", electiontype = "community")
 dat_match <- getDatMatch(dat.match = "dat_match", dat.orig = "community_df_long", election = 2, treatment = "visit_5km")
-model_voteshare_kpd_comm_matched_simple_5km <- lm(model_voteshare_kpd_comm_formula_simple, data =  dat_match, weights = dat_match$gs)
+dat_match$combweights <- dat_match$gs  * dat_match$weights
+model_voteshare_kpd_comm_matched_simple_5km <- lm(model_voteshare_kpd_comm_formula_simple, data =  dat_match, weights = dat_match$combweights)
 model_voteshare_kpd_comm_matched_simple_5km$clusterse <- runClusterRobustOLS(model_voteshare_kpd_comm_matched_simple_5km, dat_match$lfnr)
 # 10km
 dat_full <- getDatFull("community_df_long", election = 2, treatment = "visit_10km")
@@ -88,7 +92,8 @@ model_voteshare_kpd_comm_fullsample_simple_10km$clusterse <- runClusterRobustOLS
 dat_raw <- community_df_long[community_df_long$election == 2,]
 dat_match <- performMatch("visit_10km", dat.raw = "dat_raw", electiontype = "community")
 dat_match <- getDatMatch(dat.match = "dat_match", dat.orig = "community_df_long", election = 2, treatment = "visit_10km")
-model_voteshare_kpd_comm_matched_simple_10km <- lm(model_voteshare_kpd_comm_formula_simple, data =  dat_match, weights = dat_match$gs)
+dat_match$combweights <- dat_match$gs  * dat_match$weights
+model_voteshare_kpd_comm_matched_simple_10km <- lm(model_voteshare_kpd_comm_formula_simple, data =  dat_match, weights = dat_match$combweights)
 model_voteshare_kpd_comm_matched_simple_10km$clusterse <- runClusterRobustOLS(model_voteshare_kpd_comm_matched_simple_10km, dat_match$lfnr)
 # 25km
 dat_full <- getDatFull("community_df_long", election = 2, treatment = "visit_25km")
@@ -97,7 +102,8 @@ model_voteshare_kpd_comm_fullsample_simple_25km$clusterse <- runClusterRobustOLS
 dat_raw <- community_df_long[community_df_long$election == 2,]
 dat_match <- performMatch("visit_25km", dat.raw = "dat_raw", electiontype = "community")
 dat_match <- getDatMatch(dat.match = "dat_match", dat.orig = "community_df_long", election = 2, treatment = "visit_25km")
-model_voteshare_kpd_comm_matched_simple_25km <- lm(model_voteshare_kpd_comm_formula_simple, data =  dat_match, weights = dat_match$gs)
+dat_match$combweights <- dat_match$gs  * dat_match$weights
+model_voteshare_kpd_comm_matched_simple_25km <- lm(model_voteshare_kpd_comm_formula_simple, data =  dat_match, weights = dat_match$combweights)
 model_voteshare_kpd_comm_matched_simple_25km$clusterse <- runClusterRobustOLS(model_voteshare_kpd_comm_matched_simple_25km, dat_match$lfnr)
 # 50km
 dat_full <- getDatFull("community_df_long", election = 2, treatment = "visit_50km")
@@ -106,7 +112,8 @@ model_voteshare_kpd_comm_fullsample_simple_50km$clusterse <- runClusterRobustOLS
 dat_raw <- community_df_long[community_df_long$election == 2,]
 dat_match <- performMatch("visit_50km", dat.raw = "dat_raw", electiontype = "community")
 dat_match <- getDatMatch(dat.match = "dat_match", dat.orig = "community_df_long", election = 2, treatment = "visit_50km")
-model_voteshare_kpd_comm_matched_simple_50km <- lm(model_voteshare_kpd_comm_formula_simple, data =  dat_match, weights = dat_match$gs)
+dat_match$combweights <- dat_match$gs  * dat_match$weights
+model_voteshare_kpd_comm_matched_simple_50km <- lm(model_voteshare_kpd_comm_formula_simple, data =  dat_match, weights = dat_match$combweights)
 model_voteshare_kpd_comm_matched_simple_50km$clusterse <- runClusterRobustOLS(model_voteshare_kpd_comm_matched_simple_50km, dat_match$lfnr)
 
 
@@ -119,7 +126,8 @@ model_turnout_comm_fullsample_simple_5km$clusterse <- runClusterRobustOLS(model_
 dat_raw <- community_df_long[community_df_long$election == 2,]
 dat_match <- performMatch("visit_5km", dat.raw = "dat_raw", electiontype = "community")
 dat_match <- getDatMatch(dat.match = "dat_match", dat.orig = "community_df_long", election = 2, treatment = "visit_5km")
-model_turnout_comm_matched_simple_5km <- lm(model_turnout_comm_formula_simple, data =  dat_match, weights = dat_match$wbht)
+dat_match$combweights <- dat_match$wbht  * dat_match$weights
+model_turnout_comm_matched_simple_5km <- lm(model_turnout_comm_formula_simple, data =  dat_match, weights = dat_match$combweights)
 model_turnout_comm_matched_simple_5km$clusterse <- runClusterRobustOLS(model_turnout_comm_matched_simple_5km, dat_match$lfnr)
 # 10km
 dat_full <- getDatFull("community_df_long", election = 2, treatment = "visit_10km")
@@ -128,7 +136,8 @@ model_turnout_comm_fullsample_simple_10km$clusterse <- runClusterRobustOLS(model
 dat_raw <- community_df_long[community_df_long$election == 2,]
 dat_match <- performMatch("visit_10km", dat.raw = "dat_raw", electiontype = "community")
 dat_match <- getDatMatch(dat.match = "dat_match", dat.orig = "community_df_long", election = 2, treatment = "visit_10km")
-model_turnout_comm_matched_simple_10km <- lm(model_turnout_comm_formula_simple, data =  dat_match, weights = dat_match$wbht)
+dat_match$combweights <- dat_match$wbht  * dat_match$weights
+model_turnout_comm_matched_simple_10km <- lm(model_turnout_comm_formula_simple, data =  dat_match, weights = dat_match$combweights)
 model_turnout_comm_matched_simple_10km$clusterse <- runClusterRobustOLS(model_turnout_comm_matched_simple_10km, dat_match$lfnr)
 # 25km
 dat_full <- getDatFull("community_df_long", election = 2, treatment = "visit_25km")
@@ -137,7 +146,8 @@ model_turnout_comm_fullsample_simple_25km$clusterse <- runClusterRobustOLS(model
 dat_raw <- community_df_long[community_df_long$election == 2,]
 dat_match <- performMatch("visit_25km", dat.raw = "dat_raw", electiontype = "community")
 dat_match <- getDatMatch(dat.match = "dat_match", dat.orig = "community_df_long", election = 2, treatment = "visit_25km")
-model_turnout_comm_matched_simple_25km <- lm(model_turnout_comm_formula_simple, data =  dat_match, weights = dat_match$wbht)
+dat_match$combweights <- dat_match$wbht  * dat_match$weights
+model_turnout_comm_matched_simple_25km <- lm(model_turnout_comm_formula_simple, data =  dat_match, weights = dat_match$combweights)
 model_turnout_comm_matched_simple_25km$clusterse <- runClusterRobustOLS(model_turnout_comm_matched_simple_25km, dat_match$lfnr)
 # 50km
 dat_full <- getDatFull("community_df_long", election = 2, treatment = "visit_50km")
@@ -146,7 +156,8 @@ model_turnout_comm_fullsample_simple_50km$clusterse <- runClusterRobustOLS(model
 dat_raw <- community_df_long[community_df_long$election == 2,]
 dat_match <- performMatch("visit_50km", dat.raw = "dat_raw", electiontype = "community")
 dat_match <- getDatMatch(dat.match = "dat_match", dat.orig = "community_df_long", election = 2, treatment = "visit_50km")
-model_turnout_comm_matched_simple_50km <- lm(model_turnout_comm_formula_simple, data =  dat_match, weights = dat_match$wbht)
+dat_match$combweights <- dat_match$wbht  * dat_match$weights
+model_turnout_comm_matched_simple_50km <- lm(model_turnout_comm_formula_simple, data =  dat_match, weights = dat_match$combweights)
 model_turnout_comm_matched_simple_50km$clusterse <- runClusterRobustOLS(model_turnout_comm_matched_simple_50km, dat_match$lfnr)
 
 
@@ -168,15 +179,16 @@ obs <- c(length(model_voteshare_comm_fullsample_simple_5km$residuals)/2,
          length(model_voteshare_comm_fullsample_simple_25km$residuals)/2,
          length(model_voteshare_comm_matched_simple_25km$residuals)/2,
          length(model_voteshare_comm_fullsample_simple_50km$residuals)/2,
-         length(model_voteshare_comm_matched_simple_50km$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Exposure, radius of...", "(Intercept)")
+         length(model_voteshare_comm_matched_simple_50km$residuals)/2) %>% round
+
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Exposure, radius of...", "(Intercept)")
 election_names <- c("... 5km", "... 10km", "... 25km", "... 50km")
 effect_models_tex <- stargazer(model_voteshare_list, 
                                dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -208,15 +220,15 @@ obs <- c(length(model_voteshare_kpd_comm_fullsample_simple_5km$residuals)/2,
          length(model_voteshare_kpd_comm_fullsample_simple_25km$residuals)/2,
          length(model_voteshare_kpd_comm_matched_simple_25km$residuals)/2,
          length(model_voteshare_kpd_comm_fullsample_simple_50km$residuals)/2,
-         length(model_voteshare_kpd_comm_matched_simple_50km$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Exposure, radius of...", "(Intercept)")
+         length(model_voteshare_kpd_comm_matched_simple_50km$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Exposure, radius of...", "(Intercept)")
 election_names <- c("... 5km", "... 10km", "... 25km", "... 50km")
 effect_models_tex <- stargazer(model_voteshare_kpd_list, 
                                dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -248,15 +260,15 @@ obs <- c(length(model_turnout_comm_fullsample_simple_5km$residuals)/2,
          length(model_turnout_comm_fullsample_simple_25km$residuals)/2,
          length(model_turnout_comm_matched_simple_25km$residuals)/2,
          length(model_turnout_comm_fullsample_simple_50km$residuals)/2,
-         length(model_turnout_comm_matched_simple_50km$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Exposure, radius of...", "(Intercept)")
+         length(model_turnout_comm_matched_simple_50km$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Exposure, radius of...", "(Intercept)")
 election_names <- c("... 5km", "... 10km", "... 25km", "... 50km")
 effect_models_tex <- stargazer(model_turnout_list, 
                                dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -862,15 +874,15 @@ obs <- c(length(model_voteshare_12w_fullsample_simple[[1]]$residuals)/2,
          length(model_voteshare_4w_fullsample_simple[[1]]$residuals)/2,
          length(model_voteshare_4w_matched_simple[[1]]$residuals)/2,
          length(model_voteshare_2w_fullsample_simple[[1]]$residuals)/2,
-         length(model_voteshare_2w_matched_simple[[1]]$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Exposure, time span of...", "(Intercept)")
+         length(model_voteshare_2w_matched_simple[[1]]$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Exposure, time span of...", "(Intercept)")
 election_names <- c("... 12 weeks", "... 8 weeks", "... 4 weeks", "... 2 weeks")
 effect_models_tex <- stargazer(model_voteshare_list, 
                                dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -902,15 +914,15 @@ obs <- c(length(model_voteshare_kpd_12w_fullsample_simple[[1]]$residuals)/2,
          length(model_voteshare_kpd_4w_fullsample_simple[[1]]$residuals)/2,
          length(model_voteshare_kpd_4w_matched_simple[[1]]$residuals)/2,
          length(model_voteshare_kpd_2w_fullsample_simple[[1]]$residuals)/2,
-         length(model_voteshare_kpd_2w_matched_simple[[1]]$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Exposure, time span of...", "(Intercept)")
+         length(model_voteshare_kpd_2w_matched_simple[[1]]$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Exposure, time span of...", "(Intercept)")
 election_names <- c("... 12 weeks", "... 8 weeks", "... 4 weeks", "... 2 weeks")
 effect_models_tex <- stargazer(model_voteshare_kpd_list, 
                                dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -942,15 +954,15 @@ obs <- c(length(model_turnout_12w_fullsample_simple[[1]]$residuals)/2,
          length(model_turnout_4w_fullsample_simple[[1]]$residuals)/2,
          length(model_turnout_4w_matched_simple[[1]]$residuals)/2,
          length(model_turnout_2w_fullsample_simple[[1]]$residuals)/2,
-         length(model_turnout_2w_matched_simple[[1]]$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Exposure, time span of...", "(Intercept)")
+         length(model_turnout_2w_matched_simple[[1]]$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Exposure, time span of...", "(Intercept)")
 election_names <- c("... 12 weeks", "... 8 weeks", "... 4 weeks", "... 2 weeks")
 effect_models_tex <- stargazer(model_turnout_list, 
                                dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -982,15 +994,15 @@ obs <- c(length(model_voteshare_12w_fullsample_simple[[2]]$residuals)/2,
          length(model_voteshare_4w_fullsample_simple[[2]]$residuals)/2,
          length(model_voteshare_4w_matched_simple[[2]]$residuals)/2,
          length(model_voteshare_2w_fullsample_simple[[2]]$residuals)/2,
-         length(model_voteshare_2w_matched_simple[[2]]$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Exposure, time span of...", "(Intercept)")
+         length(model_voteshare_2w_matched_simple[[2]]$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Exposure, time span of...", "(Intercept)")
 election_names <- c("... 12 weeks", "... 8 weeks", "... 4 weeks", "... 2 weeks")
 effect_models_tex <- stargazer(model_voteshare_list, 
                                dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -1022,15 +1034,15 @@ obs <- c(length(model_voteshare_kpd_12w_fullsample_simple[[2]]$residuals)/2,
          length(model_voteshare_kpd_4w_fullsample_simple[[2]]$residuals)/2,
          length(model_voteshare_kpd_4w_matched_simple[[2]]$residuals)/2,
          length(model_voteshare_kpd_2w_fullsample_simple[[2]]$residuals)/2,
-         length(model_voteshare_kpd_2w_matched_simple[[2]]$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Exposure, time span of...", "(Intercept)")
+         length(model_voteshare_kpd_2w_matched_simple[[2]]$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Exposure, time span of...", "(Intercept)")
 election_names <- c("... 12 weeks", "... 8 weeks", "... 4 weeks", "... 2 weeks")
 effect_models_tex <- stargazer(model_voteshare_kpd_list, 
                                dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -1062,15 +1074,15 @@ obs <- c(length(model_turnout_12w_fullsample_simple[[2]]$residuals)/2,
          length(model_turnout_4w_fullsample_simple[[2]]$residuals)/2,
          length(model_turnout_4w_matched_simple[[2]]$residuals)/2,
          length(model_turnout_2w_fullsample_simple[[2]]$residuals)/2,
-         length(model_turnout_2w_matched_simple[[2]]$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Exposure, time span of...", "(Intercept)")
+         length(model_turnout_2w_matched_simple[[2]]$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Exposure, time span of...", "(Intercept)")
 election_names <- c("... 12 weeks", "... 8 weeks", "... 4 weeks", "... 2 weeks")
 effect_models_tex <- stargazer(model_turnout_list, 
                                dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -1103,15 +1115,15 @@ obs <- c(length(model_voteshare_12w_fullsample_simple[[3]]$residuals)/2,
          length(model_voteshare_4w_fullsample_simple[[3]]$residuals)/2,
          length(model_voteshare_4w_matched_simple[[3]]$residuals)/2,
          length(model_voteshare_2w_fullsample_simple[[3]]$residuals)/2,
-         length(model_voteshare_2w_matched_simple[[3]]$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Exposure, time span of...", "(Intercept)")
+         length(model_voteshare_2w_matched_simple[[3]]$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Exposure, time span of...", "(Intercept)")
 election_names <- c("... 12 weeks", "... 8 weeks", "... 4 weeks", "... 2 weeks")
 effect_models_tex <- stargazer(model_voteshare_list, 
                                dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -1143,15 +1155,15 @@ obs <- c(length(model_voteshare_kpd_12w_fullsample_simple[[3]]$residuals)/2,
          length(model_voteshare_kpd_4w_fullsample_simple[[3]]$residuals)/2,
          length(model_voteshare_kpd_4w_matched_simple[[3]]$residuals)/2,
          length(model_voteshare_kpd_2w_fullsample_simple[[3]]$residuals)/2,
-         length(model_voteshare_kpd_2w_matched_simple[[3]]$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Exposure, time span of...", "(Intercept)")
+         length(model_voteshare_kpd_2w_matched_simple[[3]]$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Exposure, time span of...", "(Intercept)")
 election_names <- c("... 12 weeks", "... 8 weeks", "... 4 weeks", "... 2 weeks")
 effect_models_tex <- stargazer(model_voteshare_kpd_list, 
                                dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -1183,15 +1195,15 @@ obs <- c(length(model_turnout_12w_fullsample_simple[[3]]$residuals)/2,
          length(model_turnout_4w_fullsample_simple[[3]]$residuals)/2,
          length(model_turnout_4w_matched_simple[[3]]$residuals)/2,
          length(model_turnout_2w_fullsample_simple[[3]]$residuals)/2,
-         length(model_turnout_2w_matched_simple[[3]]$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Exposure, time span of...", "(Intercept)")
+         length(model_turnout_2w_matched_simple[[3]]$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Exposure, time span of...", "(Intercept)")
 election_names <- c("... 12 weeks", "... 8 weeks", "... 4 weeks", "... 2 weeks")
 effect_models_tex <- stargazer(model_turnout_list, 
                                dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -1224,15 +1236,15 @@ obs <- c(length(model_voteshare_12w_fullsample_simple[[4]]$residuals)/2,
          length(model_voteshare_4w_fullsample_simple[[4]]$residuals)/2,
          length(model_voteshare_4w_matched_simple[[4]]$residuals)/2,
          length(model_voteshare_2w_fullsample_simple[[4]]$residuals)/2,
-         length(model_voteshare_2w_matched_simple[[4]]$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Exposure, time span of...", "(Intercept)")
+         length(model_voteshare_2w_matched_simple[[4]]$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Exposure, time span of...", "(Intercept)")
 election_names <- c("... 12 weeks", "... 8 weeks", "... 4 weeks", "... 2 weeks")
 effect_models_tex <- stargazer(model_voteshare_list, 
                                dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -1264,15 +1276,15 @@ obs <- c(length(model_voteshare_kpd_12w_fullsample_simple[[4]]$residuals)/2,
          length(model_voteshare_kpd_4w_fullsample_simple[[4]]$residuals)/2,
          length(model_voteshare_kpd_4w_matched_simple[[4]]$residuals)/2,
          length(model_voteshare_kpd_2w_fullsample_simple[[4]]$residuals)/2,
-         length(model_voteshare_kpd_2w_matched_simple[[4]]$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Exposure, time span of...", "(Intercept)")
+         length(model_voteshare_kpd_2w_matched_simple[[4]]$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Exposure, time span of...", "(Intercept)")
 election_names <- c("... 12 weeks", "... 8 weeks", "... 4 weeks", "... 2 weeks")
 effect_models_tex <- stargazer(model_voteshare_kpd_list, 
                                dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -1304,15 +1316,15 @@ obs <- c(length(model_turnout_12w_fullsample_simple[[4]]$residuals)/2,
          length(model_turnout_4w_fullsample_simple[[4]]$residuals)/2,
          length(model_turnout_4w_matched_simple[[4]]$residuals)/2,
          length(model_turnout_2w_fullsample_simple[[4]]$residuals)/2,
-         length(model_turnout_2w_matched_simple[[4]]$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Exposure, time span of...", "(Intercept)")
+         length(model_turnout_2w_matched_simple[[4]]$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Exposure, time span of...", "(Intercept)")
 election_names <- c("... 12 weeks", "... 8 weeks", "... 4 weeks", "... 2 weeks")
 effect_models_tex <- stargazer(model_turnout_list, 
                                dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -1344,15 +1356,15 @@ obs <- c(length(model_voteshare_comm_fullsample_simple_12w$residuals)/2,
          length(model_voteshare_comm_fullsample_simple_4w$residuals)/2,
          length(model_voteshare_comm_matched_simple_4w$residuals)/2,
          length(model_voteshare_comm_fullsample_simple_2w$residuals)/2,
-         length(model_voteshare_comm_matched_simple_2w$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Exposure, time span of...", "(Intercept)")
+         length(model_voteshare_comm_matched_simple_2w$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Exposure, time span of...", "(Intercept)")
 election_names <- c("... 12 weeks", "... 8 weeks", "... 4 weeks", "... 2 weeks")
 effect_models_tex <- stargazer(model_voteshare_list, 
                                dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -1385,15 +1397,15 @@ obs <- c(length(model_voteshare_kpd_comm_fullsample_simple_12w$residuals)/2,
          length(model_voteshare_kpd_comm_fullsample_simple_4w$residuals)/2,
          length(model_voteshare_kpd_comm_matched_simple_4w$residuals)/2,
          length(model_voteshare_kpd_comm_fullsample_simple_2w$residuals)/2,
-         length(model_voteshare_kpd_comm_matched_simple_2w$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Exposure, radius of...", "(Intercept)")
+         length(model_voteshare_kpd_comm_matched_simple_2w$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Exposure, radius of...", "(Intercept)")
 election_names <- c("... 12 weeks", "... 8 weeks", "... 4 weeks", "... 2 weeks")
 effect_models_tex <- stargazer(model_voteshare_kpd_list, 
                                dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -1425,15 +1437,15 @@ obs <- c(length(model_turnout_comm_fullsample_simple_12w$residuals)/2,
          length(model_turnout_comm_fullsample_simple_4w$residuals)/2,
          length(model_turnout_comm_matched_simple_4w$residuals)/2,
          length(model_turnout_comm_fullsample_simple_2w$residuals)/2,
-         length(model_turnout_comm_matched_simple_2w$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Exposure, radius of...", "(Intercept)")
+         length(model_turnout_comm_matched_simple_2w$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Exposure, radius of...", "(Intercept)")
 election_names <- c("... 12 weeks", "... 8 weeks", "... 4 weeks", "... 2 weeks")
 effect_models_tex <- stargazer(model_turnout_list, 
                                dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -2074,15 +2086,15 @@ obs <- c(length(model_voteshare_wb1_fullsample_simple[[1]]$residuals)/2,
          length(model_voteshare_wb3_fullsample_simple[[1]]$residuals)/2,
          length(model_voteshare_wb3_matched_simple[[1]]$residuals)/2,
          length(model_voteshare_wb4_fullsample_simple[[1]]$residuals)/2,
-         length(model_voteshare_wb4_matched_simple[[1]]$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Exposure, county size of...", "(Intercept)")
+         length(model_voteshare_wb4_matched_simple[[1]]$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Exposure, county size of...", "(Intercept)")
 election_names <- c("... less than 20k ", "... between 20k and 50k", "... between 50k and 80k", "... more than 80k")
 effect_models_tex <- stargazer(model_voteshare_list, 
                                dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -2114,15 +2126,15 @@ obs <- c(length(model_voteshare_kpd_wb1_fullsample_simple[[1]]$residuals)/2,
          length(model_voteshare_kpd_wb3_fullsample_simple[[1]]$residuals)/2,
          length(model_voteshare_kpd_wb3_matched_simple[[1]]$residuals)/2,
          length(model_voteshare_kpd_wb4_fullsample_simple[[1]]$residuals)/2,
-         length(model_voteshare_kpd_wb4_matched_simple[[1]]$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Exposure, county size of...", "(Intercept)")
+         length(model_voteshare_kpd_wb4_matched_simple[[1]]$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Exposure, county size of...", "(Intercept)")
 election_names <- c("... less than 20k ", "... between 20k and 50k", "... between 50k and 80k", "... more than 80k")
 effect_models_tex <- stargazer(model_voteshare_kpd_list, 
                                dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -2154,15 +2166,15 @@ obs <- c(length(model_turnout_wb1_fullsample_simple[[1]]$residuals)/2,
          length(model_turnout_wb3_fullsample_simple[[1]]$residuals)/2,
          length(model_turnout_wb3_matched_simple[[1]]$residuals)/2,
          length(model_turnout_wb4_fullsample_simple[[1]]$residuals)/2,
-         length(model_turnout_wb4_matched_simple[[1]]$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Exposure, county size of...", "(Intercept)")
+         length(model_turnout_wb4_matched_simple[[1]]$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Exposure, county size of...", "(Intercept)")
 election_names <- c("... less than 20k ", "... between 20k and 50k", "... between 50k and 80k", "... more than 80k")
 effect_models_tex <- stargazer(model_turnout_list, 
                                dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -2194,15 +2206,15 @@ obs <- c(length(model_voteshare_wb1_fullsample_simple[[2]]$residuals)/2,
          length(model_voteshare_wb3_fullsample_simple[[2]]$residuals)/2,
          length(model_voteshare_wb3_matched_simple[[2]]$residuals)/2,
          length(model_voteshare_wb4_fullsample_simple[[2]]$residuals)/2,
-         length(model_voteshare_wb4_matched_simple[[2]]$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Exposure, county size of...", "(Intercept)")
+         length(model_voteshare_wb4_matched_simple[[2]]$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Exposure, county size of...", "(Intercept)")
 election_names <- c("... less than 20k ", "... between 20k and 50k", "... between 50k and 80k", "... more than 80k")
 effect_models_tex <- stargazer(model_voteshare_list, 
                                dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -2234,15 +2246,15 @@ obs <- c(length(model_voteshare_kpd_wb1_fullsample_simple[[2]]$residuals)/2,
          length(model_voteshare_kpd_wb3_fullsample_simple[[2]]$residuals)/2,
          length(model_voteshare_kpd_wb3_matched_simple[[2]]$residuals)/2,
          length(model_voteshare_kpd_wb4_fullsample_simple[[2]]$residuals)/2,
-         length(model_voteshare_kpd_wb4_matched_simple[[2]]$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Exposure, county size of...", "(Intercept)")
+         length(model_voteshare_kpd_wb4_matched_simple[[2]]$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Exposure, county size of...", "(Intercept)")
 election_names <- c("... less than 20k ", "... between 20k and 50k", "... between 50k and 80k", "... more than 80k")
 effect_models_tex <- stargazer(model_voteshare_kpd_list, 
                                dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -2274,15 +2286,15 @@ obs <- c(length(model_turnout_wb1_fullsample_simple[[2]]$residuals)/2,
          length(model_turnout_wb3_fullsample_simple[[2]]$residuals)/2,
          length(model_turnout_wb3_matched_simple[[2]]$residuals)/2,
          length(model_turnout_wb4_fullsample_simple[[2]]$residuals)/2,
-         length(model_turnout_wb4_matched_simple[[2]]$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Exposure, county size of...", "(Intercept)")
+         length(model_turnout_wb4_matched_simple[[2]]$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Exposure, county size of...", "(Intercept)")
 election_names <- c("... less than 20k ", "... between 20k and 50k", "... between 50k and 80k", "... more than 80k")
 effect_models_tex <- stargazer(model_turnout_list, 
                                dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -2315,15 +2327,15 @@ obs <- c(length(model_voteshare_wb1_fullsample_simple[[3]]$residuals)/2,
          length(model_voteshare_wb3_fullsample_simple[[3]]$residuals)/2,
          length(model_voteshare_wb3_matched_simple[[3]]$residuals)/2,
          length(model_voteshare_wb4_fullsample_simple[[3]]$residuals)/2,
-         length(model_voteshare_wb4_matched_simple[[3]]$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Exposure, county size of...", "(Intercept)")
+         length(model_voteshare_wb4_matched_simple[[3]]$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Exposure, county size of...", "(Intercept)")
 election_names <- c("... less than 20k ", "... between 20k and 50k", "... between 50k and 80k", "... more than 80k")
 effect_models_tex <- stargazer(model_voteshare_list, 
                                dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -2355,15 +2367,15 @@ obs <- c(length(model_voteshare_kpd_wb1_fullsample_simple[[3]]$residuals)/2,
          length(model_voteshare_kpd_wb3_fullsample_simple[[3]]$residuals)/2,
          length(model_voteshare_kpd_wb3_matched_simple[[3]]$residuals)/2,
          length(model_voteshare_kpd_wb4_fullsample_simple[[3]]$residuals)/2,
-         length(model_voteshare_kpd_wb4_matched_simple[[3]]$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Exposure, county size of...", "(Intercept)")
+         length(model_voteshare_kpd_wb4_matched_simple[[3]]$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Exposure, county size of...", "(Intercept)")
 election_names <- c("... less than 20k ", "... between 20k and 50k", "... between 50k and 80k", "... more than 80k")
 effect_models_tex <- stargazer(model_voteshare_kpd_list, 
                                dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -2395,15 +2407,15 @@ obs <- c(length(model_turnout_wb1_fullsample_simple[[3]]$residuals)/2,
          length(model_turnout_wb3_fullsample_simple[[3]]$residuals)/2,
          length(model_turnout_wb3_matched_simple[[3]]$residuals)/2,
          length(model_turnout_wb4_fullsample_simple[[3]]$residuals)/2,
-         length(model_turnout_wb4_matched_simple[[3]]$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Exposure, county size of...", "(Intercept)")
+         length(model_turnout_wb4_matched_simple[[3]]$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Exposure, county size of...", "(Intercept)")
 election_names <- c("... less than 20k ", "... between 20k and 50k", "... between 50k and 80k", "... more than 80k")
 effect_models_tex <- stargazer(model_turnout_list, 
                                dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -2436,15 +2448,15 @@ obs <- c(length(model_voteshare_wb1_fullsample_simple[[4]]$residuals)/2,
          length(model_voteshare_wb3_fullsample_simple[[4]]$residuals)/2,
          length(model_voteshare_wb3_matched_simple[[4]]$residuals)/2,
          length(model_voteshare_wb4_fullsample_simple[[4]]$residuals)/2,
-         length(model_voteshare_wb4_matched_simple[[4]]$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Exposure, county size of...", "(Intercept)")
+         length(model_voteshare_wb4_matched_simple[[4]]$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Exposure, county size of...", "(Intercept)")
 election_names <- c("... less than 20k ", "... between 20k and 50k", "... between 50k and 80k", "... more than 80k")
 effect_models_tex <- stargazer(model_voteshare_list, 
                                dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -2476,15 +2488,15 @@ obs <- c(length(model_voteshare_kpd_wb1_fullsample_simple[[4]]$residuals)/2,
          length(model_voteshare_kpd_wb3_fullsample_simple[[4]]$residuals)/2,
          length(model_voteshare_kpd_wb3_matched_simple[[4]]$residuals)/2,
          length(model_voteshare_kpd_wb4_fullsample_simple[[4]]$residuals)/2,
-         length(model_voteshare_kpd_wb4_matched_simple[[4]]$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Exposure, county size of...", "(Intercept)")
+         length(model_voteshare_kpd_wb4_matched_simple[[4]]$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Exposure, county size of...", "(Intercept)")
 election_names <- c("... less than 20k ", "... between 20k and 50k", "... between 50k and 80k", "... more than 80k")
 effect_models_tex <- stargazer(model_voteshare_kpd_list, 
                                dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -2516,15 +2528,15 @@ obs <- c(length(model_turnout_wb1_fullsample_simple[[4]]$residuals)/2,
          length(model_turnout_wb3_fullsample_simple[[4]]$residuals)/2,
          length(model_turnout_wb3_matched_simple[[4]]$residuals)/2,
          length(model_turnout_wb4_fullsample_simple[[4]]$residuals)/2,
-         length(model_turnout_wb4_matched_simple[[4]]$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Exposure, county size of...", "(Intercept)")
+         length(model_turnout_wb4_matched_simple[[4]]$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Exposure, county size of...", "(Intercept)")
 election_names <- c("... less than 20k ", "... between 20k and 50k", "... between 50k and 80k", "... more than 80k")
 effect_models_tex <- stargazer(model_turnout_list, 
                                dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -2907,7 +2919,7 @@ model_voteshare_formula_simple <- paste("p_nsdap ~ as.factor(election) + time + 
 
 model_voteshare_1count_fullsample_simple <- lm(model_voteshare_formula_simple, data =  dat_full_1count_pooled, weights = dat_full_1count_pooled$gs)
 model_voteshare_1count_fullsample_simple$clusterse <- runClusterRobustOLS(model_voteshare_1count_fullsample_simple, dat_full_1count_pooled$lfnr)
-summary(model_voteshare_1count_full_simple)
+summary(model_voteshare_1count_fullsample_simple)
 
 model_voteshare_2count_fullsample_simple <- lm(model_voteshare_formula_simple, data =  dat_full_2count_pooled, weights = dat_full_2count_pooled$gs)
 model_voteshare_2count_fullsample_simple$clusterse <- runClusterRobustOLS(model_voteshare_2count_fullsample_simple, dat_full_2count_pooled$lfnr)
@@ -2942,15 +2954,15 @@ obs <- c(length(model_voteshare_1count_fullsample_simple$residuals)/2,
          length(model_voteshare_2count_fullsample_simple$residuals)/2,
          length(model_voteshare_2count_matched_simple$residuals)/2,
          length(model_voteshare_3count_fullsample_simple$residuals)/2,
-         length(model_voteshare_3count_matched_simple$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}Number of visits:", "(Intercept)")
+         length(model_voteshare_3count_matched_simple$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}Time trend", "Base rate difference", "Number of visits: ...", "(Intercept)")
 election_names <- c("One visit ", "Two visits", "Three or more visits")
 effect_models_tex <- stargazer(model_voteshare_list, 
                                dep.var.caption = "", #dep.var.caption = "Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -3095,15 +3107,15 @@ obs <- c(length(model_voteshare_1size_fullsample_simple$residuals)/2,
          length(model_voteshare_3size_fullsample_simple$residuals)/2,
          length(model_voteshare_3size_matched_simple$residuals)/2,
          length(model_voteshare_4size_fullsample_simple$residuals)/2,
-         length(model_voteshare_4size_matched_simple$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Number of visitors:", "(Intercept)")
+         length(model_voteshare_4size_matched_simple$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Number of visitors:", "(Intercept)")
 election_names <- c("Unknown", "Less than 5,000", "Between 5,000 and 20,000", "20,000 or more")
 effect_models_tex <- stargazer(model_voteshare_list, 
                                dep.var.caption = "", #dep.var.caption = "Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 

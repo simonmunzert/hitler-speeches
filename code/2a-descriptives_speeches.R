@@ -79,7 +79,7 @@ pdf(file="../figures/audience_estimates_density.pdf", height=4, width=8, family=
 par(oma=c(0,0,0,0) + .7)
 par(mar=c(4, 4,.5,.5))
 par(xaxs = "i", yaxs = "i")
-plot(density(speeches_df$audience_police_num, na.rm = TRUE, bw = 5000), main = "", xlab = "Reported audience size", lty = 2, lwd = 2, col = "black", xlim = c(0, max(c(sum_police, sum_press, sum_nspress, sum_imputed))))
+plot(density(speeches_df$audience_police_num, na.rm = TRUE, bw = 5000), main = "", xlab = "Audience size", lty = 2, lwd = 2, col = "black", xlim = c(0, max(c(sum_police, sum_press, sum_nspress, sum_imputed))))
 lines(density(speeches_df$audience_press_num, na.rm = TRUE, bw = 5000), lty = 3, lwd = 2, col = "black")
 lines(density(speeches_df$audience_nspress_num, na.rm = TRUE, bw = 5000), lty = 4, lwd = 2, col = "black")
 lines(density(speeches_df$audience_police_num_imputed, na.rm = TRUE, bw = 5000), lty = 1, lwd = 2, col = "black")

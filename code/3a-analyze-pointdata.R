@@ -37,75 +37,76 @@ load("community_df_pointdata_long.RData")
 varnames_tab <- read.csv("varnames_labels.csv", stringsAsFactors = FALSE, sep = ",")
 
 
+
 ## estimate propensity score models + matching -----------------------
 
 # 1:1 matching, Reichstag elections
 model.out.list <- list()
 model.out.probit.list <- list()
 match.data.list <- list()
-covar_names <- c( "wkr_comp_last", "wkv_comp_last", "memberst", "airfields_dist_min100km", "wbht", "l_p_nsdap", "l_visit_10km", "goebbels_10km")
-model.formula <- paste("visit_10km ~ ", paste(covar_names, collapse=" + "),sep = "") %>% as.formula
+covar_names <- c("wkr_comp_last", "wkv_comp_last", "memberst", "airfields_dist_min100km", "wbht", "l_p_nsdap", "l_visit_10km", "goebbels_10km")
+model_formula <- paste("visit_10km ~ ", paste(covar_names, collapse=" + "), sep = "") %>% as.formula
 set.seed(42)
  for (i in 1:4) {
    dat_ps <- county_df_long[county_df_long$election == i+1,]
    rownames(dat_ps) <- 1:nrow(dat_ps)
-  model.out.list[[i]] <- matchit(formula = model.formula, 
+  model.out.list[[i]] <- matchit(formula = model_formula, 
                                  data = dat_ps,
                                  method = "nearest", # NN matching
                 								 m.order = "random", # matches in random order
                 								 ratio = 1, # 1:1 matching
-                								 #caliper = .50, # .5 standard deviations of the distance measure within which to draw control units
-                								 #calclosest = FALSE, #whether to take the nearest available match if no matches are available within the caliper
-                								 replace = TRUE, # control unit can be matched to more than one treated unit
-                                 discard = "both", # all units (treated and control) that are outside the support  will be discarded.
+                								 caliper = .25, # .25 standard deviations of the distance measure within which to draw control units
+                								 replace = FALSE, # control unit can be matched to more than one treated unit
+                                 discard = "none", # no units (treated and control) that are outside the support  will be discarded.
                 								 exact = "visit_10km_nomatch", # introduce matching buffer zone
                                  distance = "probit") # probit distance measure
   model.out.probit.list[[i]] <- model.out.list[[i]]$model
   match.data.list[[i]] <- match.data(model.out.list[[i]])
-  print(summary(model.out.list[[i]]))
-}		
+  #print(summary(model.out.list[[i]]))
+  print(model.out.list[[i]]$nn)
+ }		
 
 # 1:1 matching, presidential election
 covar_names_pres <- c( "memberst", "airfields_dist_min100km", "wbht", "l_p_hitl", "l_visit_10km", "goebbels_10km")
-model.formula <- paste("visit_10km ~ ", paste(covar_names_pres, collapse=" + "),sep = "") %>% as.formula
+model_formula <- paste("visit_10km ~ ", paste(covar_names_pres, collapse=" + "),sep = "") %>% as.formula
 set.seed(42)
 dat_ps <- county_pres_df_long[county_pres_df_long$election == 7,]
 rownames(dat_ps) <- 1:nrow(dat_ps)
-model.out.pres <- matchit(formula = model.formula, 
+model.out.pres <- matchit(formula = model_formula, 
                           data = dat_ps,
                           method = "nearest", 
                           m.order = "random",
                           ratio = 1,
-                          #caliper = .50,
-                          #calclosest = FALSE,
-                          replace = TRUE,
-                          discard = "both",
-                          exact = "visit_10km_nomatch", # introduce matching buffer zone
+                          caliper = .25,
+                          replace = FALSE,
+                          discard = "none",
+                          exact = "visit_10km_nomatch",
                           distance = "probit")
 model.out.probit.pres <- model.out.pres$model
 match.data.pres <- match.data(model.out.pres)
-print(summary(model.out.pres))
+#print(summary(model.out.pres))
+print(model.out.pres$nn)
 
 # 1:1 matching, 1930 Reichstag election, community-level data
-covar_names <- c("wkr_comp_last", "wkv_comp_last", "memberst", "airfields_dist_min100km", "wbht", "l_p_nsdap_comm", "l_visit_10km_comm", "goebbels_10km")
-model.formula <- paste("visit_10km ~ ", paste(covar_names, collapse=" + "),sep = "") %>% as.formula
+covar_names <- c("wkr_comp_last", "wkv_comp_last", "memberst", "airfields_dist_min100km", "wbht", "l_p_nsdap", "l_visit_10km", "goebbels_10km")
+model_formula <- paste("visit_10km ~ ", paste(covar_names, collapse=" + "),sep = "") %>% as.formula
 set.seed(42)
 dat_ps <- community_df_long[community_df_long$election == 2,]
 rownames(dat_ps) <- 1:nrow(dat_ps)
-model.out.comm <- matchit(formula = model.formula, 
+model.out.comm <- matchit(formula = model_formula, 
                           data = dat_ps,
                           method = "nearest", 
                           m.order = "random",
                           ratio = 1,
-                          #caliper = .50,
-                          #calclosest = FALSE,
-                          replace = TRUE,
-                          discard = "both",
-                          exact = "visit_10km_nomatch", # introduce matching buffer zone
+                          caliper = .25,
+                          replace = FALSE,
+                          discard = "none",
+                          exact = "visit_10km_nomatch",
                           distance = "probit")
 model.out.probit.comm <- model.out.comm$model
 match.data.comm <- match.data(model.out.comm)
-print(summary(model.out.comm))
+#print(summary(model.out.comm))
+print(model.out.comm$nn)
 
 
 
@@ -118,17 +119,17 @@ colors[4] <- "#969696"
 # re-run models
 model.out.probit.plot.list <- list()
 covar_names <- c("goebbels_10km", "airfields_dist_min100km", "wbht", "wkv_comp_last","wkr_comp_last",  "memberst", "l_p_nsdap", "l_visit_10km")
-model.formula <- paste("visit_10km ~ ", paste(covar_names, collapse=" + "),sep = "") %>% as.formula
+model_formula <- paste("visit_10km ~ ", paste(covar_names, collapse=" + "),sep = "") %>% as.formula
 covar_names_pres <- c("goebbels_10km", "airfields_dist_min100km",  "wbht",  "memberst", "l_p_hitl", "l_visit_10km")
-model.formula.pres <- paste("visit_10km ~ ", paste(covar_names_pres, collapse=" + "),sep = "") %>% as.formula
-covar_names_comm <- c("l_visit_10km_comm", "l_p_nsdap_comm", "memberst", "wkr_comp_last", "wkv_comp_last", "wbht", "airfields_dist_min100km", "goebbels_10km")
-model.formula.comm <- paste("visit_10km ~ ", paste(covar_names_comm, collapse=" + "),sep = "") %>% as.formula
+model_formula_pres <- paste("visit_10km ~ ", paste(covar_names_pres, collapse=" + "),sep = "") %>% as.formula
+covar_names_comm <- c("l_visit_10km", "l_p_nsdap", "memberst", "wkr_comp_last", "wkv_comp_last", "wbht", "airfields_dist_min100km", "goebbels_10km")
+model_formula_comm <- paste("visit_10km ~ ", paste(covar_names_comm, collapse=" + "),sep = "") %>% as.formula
 set.seed(42)
 for (i in 1:4) {
-  model.out.probit.plot.list[[i]] <- glm(model.formula, data = county_df_long[county_df_long$election == i+1,], family=binomial(link="probit"))
+  model.out.probit.plot.list[[i]] <- glm(model_formula, data = county_df_long[county_df_long$election == i+1,], family=binomial(link="probit"))
 }		
-model.out.probit.plot.list[[5]] <- glm(model.formula.pres, data = county_pres_df_long[county_pres_df_long$election == 7,], family=binomial(link="probit"))
-model.out.probit.plot.list[[6]] <- glm(model.formula.comm, data = community_df_long[community_df_long$election == 2,], family=binomial(link="probit"))
+model.out.probit.plot.list[[5]] <- glm(model_formula_pres, data = county_pres_df_long[county_pres_df_long$election == 7,], family=binomial(link="probit"))
+model.out.probit.plot.list[[6]] <- glm(model_formula_comm, data = community_df_long[community_df_long$election == 2,], family=binomial(link="probit"))
 names(model.out.probit.plot.list[[6]]$coefficients) <- c("(Intercept)", "l_visit_10km", "l_p_nsdap", "memberst", "wkr_comp_last", "wkv_comp_last", "wbht", "airfields_dist_min100km", "goebbels_10kmTRUE")
 
 # re-sort models
@@ -171,7 +172,11 @@ model.out.probit.table.list <- list(model.out.probit.list[[1]], model.out.probit
 r2_mcfadden <- sapply(model.out.probit.table.list, R2probit) %>% round(2)
 varnames.long <- c(varnames_tab$varnames_long[match(c("wkr_comp_last", "wkv_comp_last", "memberst",  "airfields_dist_min100km", "wbht", "l_p_nsdap", "l_p_hitl", "l_visit_10km", "goebbels_10kmTRUE"), varnames_tab$varnames)], "(Intercept)")
 varnames.long[1] <- paste0("\\cmidrule(r){2-2}\\cmidrule(r){3-3}\\cmidrule(r){4-4}\\cmidrule(r){5-5}\\cmidrule(r){6-6}\\cmidrule(r){7-7}", varnames.long[1])
-probit.models.tex <- stargazer(model.out.probit.table.list, dep.var.caption = "", covariate.labels = varnames.long, no.space = TRUE, add.lines = list(c("Mc-Fadden's Pseudo R2", r2_mcfadden)), omit.table.layout = "d#", column.labels = c("Sep 1930", "\\specialcell{Sep 1930 \\\\(mun.)}", "Apr 1932 (P)", "Jul 1932", "Nov 1932", "Mar 1933"), column.sep.width = "1pt", font.size = "footnotesize", table.placement = "t!", title="Probit estimates of Hitler appearances by election. Standard errors in parentheses.\\label{tab:probit-models}", out = "../figures/tab-probit-models.tex")
+probit.models.tex <- stargazer(model.out.probit.table.list, dep.var.caption = "", covariate.labels = varnames.long, 
+                               no.space = TRUE, add.lines = list(c("Mc-Fadden's Pseudo R2", r2_mcfadden)), omit.table.layout = "d#", column.labels = c("Sep 1930", "\\specialcell{Sep 1930 \\\\(mun.)}", "Apr 1932 (P)", "Jul 1932", "Nov 1932", "Mar 1933"), column.sep.width = "1pt", font.size = "footnotesize", table.placement = "t!", title="Probit estimates of Hitler appearances by election. Standard errors in parentheses.\\label{tab:probit-models}", out = "../figures/tab-probit-models.tex")
+probit.models.tex <- stargazer(model.out.probit.table.list, dep.var.caption = "", covariate.labels = varnames.long, 
+                               no.space = TRUE, add.lines = list(c("Mc-Fadden's Pseudo R2", r2_mcfadden), type = "html"), omit.table.layout = "d#", column.labels = c("Sep 1930", "\\specialcell{Sep 1930 \\\\(mun.)}", "Apr 1932 (P)", "Jul 1932", "Nov 1932", "Mar 1933"), column.sep.width = "1pt", font.size = "footnotesize", table.placement = "t!", title="Probit estimates of Hitler appearances by election. Standard errors in parentheses.\\label{tab:probit-models}", out = "../figures/tab-probit-models.html")
+
 
 
 ## visualize propensity scores -----------------
@@ -239,11 +244,11 @@ tab_list[[i]] <- tab
 
 # fix rownames issue
 rownames(tab_list[[5]]) <- str_replace(rownames(tab_list[[5]]), "l_p_hitl", "l_p_nsdap")
-rownames(tab_list[[6]]) <- str_replace(rownames(tab_list[[6]]), "_comm", "")
 
 # combine into one table
 tab_list <- list(tab_list[[1]], tab_list[[6]], tab_list[[5]], tab_list[[2]], tab_list[[3]], tab_list[[4]])
 tab_tex <- do.call("cbind.fill", c(list(fill = ""), tab_list))
+rownames(tab_tex) <- tab_tex$name
 
 # fix pres election variables issue
 tab_tex[4:11,9:11] <- tab_tex[2:9,9:11]
@@ -280,17 +285,107 @@ addtorow2$command <- paste0(paste0(' & \\multicolumn{3}{c}{July 1932} &  \\multi
                             paste0('\\cmidrule(r){2-4} \\cmidrule(r){5-7} \\cmidrule(r){8-10}\\textit{Variable names} & Before & After & \\% Impr. & Before & After & \\% Impr. & Before & After & \\% Impr.', collapse=''), '\\\\')
 
 # print tables
-cols_align <- c("l", "l", rep("r", ncol(tab_tex1)-1))
+cols_align <- c("l", "r", rep("r", ncol(tab_tex1)-1))
 tab_tex1 <- sapply(tab_tex1, function(x) num(char(x))) 
 rownames(tab_tex1) <- rownames(tab_tex)
 xtab1 <- xtable(tab_tex1, digits = c(0,rep(c(2,2,0), 3)), align = cols_align, caption = "Propensity score and covariate balance before and after matching. Mean differences on variables reported.\\label{tab:balance1}")
 print(xtab1, booktabs = TRUE, size = "scriptsize", caption.placement = "top", table.placement = "t!", add.to.row=addtorow1,  include.rownames=TRUE, include.colnames = FALSE, sanitize.text.function = identity, file = "../figures/tab-balance1.tex")
+print(xtab1, booktabs = TRUE, size = "scriptsize", caption.placement = "top", table.placement = "t!", add.to.row=addtorow1,  include.rownames=TRUE, include.colnames = FALSE, sanitize.text.function = identity, file = "../figures/tab-balance1.html", type = "html")
 
-cols_align <- c("l", "l", rep("r", ncol(tab_tex2)-1))
+
+cols_align <- c("l", "r", rep("r", ncol(tab_tex2)-1))
 tab_tex2 <- sapply(tab_tex2, function(x) num(char(x))) 
 rownames(tab_tex2) <- rownames(tab_tex)
 xtab2 <- xtable(tab_tex2, digits = c(0,rep(c(2,2,0), 3)), align = cols_align, caption = "Propensity score and covariate balance before and after matching, \\textit{continued}. Mean differences on variables reported.\\label{tab:balance2}")
 print(xtab2, booktabs = TRUE, size = "scriptsize", caption.placement = "top", table.placement = "t!", add.to.row=addtorow2,  include.rownames=TRUE, include.colnames = FALSE, sanitize.text.function = identity, file = "../figures/tab-balance2.tex")
+print(xtab2, booktabs = TRUE, size = "scriptsize", caption.placement = "top", table.placement = "t!", add.to.row=addtorow2,  include.rownames=TRUE, include.colnames = FALSE, sanitize.text.function = identity, file = "../figures/tab-balance2.html", type = "html")
+
+
+## plot: pre-treatment trends -----------
+
+# import prepared data
+load("elections_all_df_pointdata_long.RData")
+elections_df_long <- filter(elections_df_long, election >= 1 &  election <= 5)
+
+# select variables
+elections_df_long <- dplyr::select(elections_df_long, election, lfnr, agglvl, name,  pop, wb, gs, p_nsdap, p_kpd, p_hitl, p_turnout, visit_10km, d_p_nsdap, d_p_kpd, d_p_hitl, d_p_turnout)
+
+# create lead visit variable; important to identify relevant exposure cases
+elections_df_long <- 
+  elections_df_long %>%
+  group_by(lfnr) %>%
+  mutate(l1.visit_10km = lead(visit_10km, 1), l2.visit_10km = lead(visit_10km, 2))
+
+# select only matched data; compute summary statistics
+match.data.long.list <- list()
+match.data.group.list <- list()
+match.data.sum.list <- list()
+for (i in 1:4) {
+  match.data.long.list[[i]] <- elections_df_long[elections_df_long$lfnr %in% match.data.list[[i]]$lfnr,]
+  match.data.group.list[[i]] <-  group_by(match.data.long.list[[i]], election)
+  match.data.sum.list[[i]] <- summarize(match.data.group.list[[i]], 
+                                  p_nsdap_untreated_avg = mean(p_nsdap[visit_10km != 1], na.rm = TRUE),
+                                  p_nsdap_treated_avg = mean(p_nsdap[visit_10km == 1], na.rm = TRUE),
+                                  p_nsdap_untreated_avg_1 = mean(p_nsdap[l1.visit_10km != 1], na.rm = TRUE),
+                                  p_nsdap_treated_avg_1 = mean(p_nsdap[l1.visit_10km == 1], na.rm = TRUE),
+                                  p_nsdap_untreated_avg_2 = mean(p_nsdap[l2.visit_10km != 1], na.rm = TRUE),
+                                  p_nsdap_treated_avg_2 = mean(p_nsdap[l2.visit_10km == 1], na.rm = TRUE),
+                                  d_p_nsdap_untreated_avg = mean(d_p_nsdap[visit_10km != 1], na.rm = TRUE),
+                                  d_p_nsdap_treated_avg = mean(d_p_nsdap[visit_10km == 1], na.rm = TRUE),
+                                  d_p_nsdap_untreated_avg_1 = mean(d_p_nsdap[l1.visit_10km != 1], na.rm = TRUE),
+                                  d_p_nsdap_treated_avg_1 = mean(d_p_nsdap[l1.visit_10km == 1], na.rm = TRUE),
+                                  d_p_nsdap_untreated_avg_2 = mean(d_p_nsdap[l2.visit_10km != 1], na.rm = TRUE),
+                                  d_p_nsdap_treated_avg_2 = mean(d_p_nsdap[l2.visit_10km == 1], na.rm = TRUE))
+}
+
+
+pdf(file="../figures/pretreatment_trends.pdf", height=10, width=7, family="URWTimes")
+par(oma=c(0,0,0,0))
+par(mar=c(3,4,5,3))
+par(mfrow=c(3,1))
+par(xaxs = "i", yaxs = "i")
+election_names <-  c("May 1928", "Sep 1930", "Jul 1932", "Nov 1932", "Mar 1933")
+for (i in 2:4) {
+  # select relevant elections
+  dat <- match.data.long.list[[i]]
+  dat <- filter(dat, election <= i+1, election >= i-1)
+  election_names_filtered <- election_names[(i-1):(i+1)]
+  # empty plot, axes
+  plot(dat$election-(i-2), dat$p_nsdap, cex=0, axes=F, ann = F, ylim=c(0,.8), xlim = c(.95, 3.05))
+  axis(1, las=0, at = seq(1,3,1), election_names_filtered, cex=.8)
+  axis(1, las=0, at = c(1.5,2.5), c("[pre-treatment period]", "[treatment period]"), cex=.8, tick = F)
+  axis(2, las=1, at=seq(0,.8,.2), label=seq(0,.8,.2), cex=.8)
+  axis(4, las=1, at=seq(0,.8,.2), label=seq(0,.8,.2), cex=.8)
+  title(main = paste("Matched units for", election_names_filtered[3], "election"), ylab="NSDAP vote share", xlab="Election")
+  # write average trends
+  text(1.5, .72, labels = paste("Average trend, treatment group:", (match.data.sum.list[[i]]$p_nsdap_treated_avg_1[i] - match.data.sum.list[[i]]$p_nsdap_treated_avg_2[i-1]) %>% round(2)), col = "red")
+  text(1.5, .67, labels = paste("Average trend, control group:", (match.data.sum.list[[i]]$p_nsdap_untreated_avg_1[i] - match.data.sum.list[[i]]$p_nsdap_untreated_avg_2[i-1]) %>% round(2)), col = "black")
+  text(2.5, .72, labels = paste("Average trend, treatment group:", (match.data.sum.list[[i]]$p_nsdap_treated_avg[i+1] - match.data.sum.list[[i]]$p_nsdap_treated_avg_1[i]) %>% round(2)), col = "red")
+  text(2.5, .67, labels = paste("Average trend, control group:", (match.data.sum.list[[i]]$p_nsdap_untreated_avg[i+1] - match.data.sum.list[[i]]$p_nsdap_untreated_avg_1[i]) %>% round(2)), col = "black")
+  abline(h=seq(0, 1, .2), lty = 2, col = "darkgrey")
+  # county lines, exposed units
+  dat <- arrange(dat, lfnr, election)
+  lines(dat$election[(dat$election == i+1 & dat$visit_10km == 1) | (dat$election == i &dat$l1.visit_10km == 1) | (dat$election == i-1 & dat$l2.visit_10km == 1)]-(i-2),
+        dat$p_nsdap[(dat$election == i+1 & dat$visit_10km == 1) | (dat$election == i &dat$l1.visit_10km == 1) | (dat$election == i-1 & dat$l2.visit_10km == 1)],
+        type = "b", lwd=1, col=rgb(.9,0,0, alpha=0.2))
+  # county lines, control units
+   lines(dat$election[-(dat$election == i+1 & dat$visit_10km == 1) | (dat$election == i &dat$l1.visit_10km == 1) | (dat$election == i-1 & dat$l2.visit_10km == 1)]-(i-2),
+        dat$p_nsdap[!((dat$election == i+1 & dat$visit_10km == 1) | (dat$election == i &dat$l1.visit_10km == 1) | (dat$election == i-1 & dat$l2.visit_10km == 1))],
+        type = "b", lwd=1, col=rgb(0,0,0, alpha=0.1))
+  # average lines
+  match.data.sum.list[[i]] <- filter(match.data.sum.list[[i]], election <= i+1, election >= i-1)
+  lines(match.data.sum.list[[i]]$election-(i-2), 
+        c(match.data.sum.list[[i]]$p_nsdap_untreated_avg_2[1],
+          match.data.sum.list[[i]]$p_nsdap_untreated_avg_1[2],
+          match.data.sum.list[[i]]$p_nsdap_untreated_avg[3]), type = "b", lwd = 3, lty = 1, col="black")
+  lines(match.data.sum.list[[i]]$election-(i-2), 
+        c(match.data.sum.list[[i]]$p_nsdap_treated_avg_2[1],
+          match.data.sum.list[[i]]$p_nsdap_treated_avg_1[2],
+          match.data.sum.list[[i]]$p_nsdap_treated_avg[3]), type = "b", lwd = 3, lty = 1, col="red")
+}
+dev.off()
+
+
 
 
 
@@ -305,10 +400,11 @@ for (i in 1:4) {
 dat_full <- getDatFull("county_df_long", election = i+1, treatment = "visit_10km")
 model_voteshare_fullsample_simple[[i]] <- lm(model_voteshare_formula_simple, data =  dat_full, weights = dat_full$gs)
 model_voteshare_fullsample_simple[[i]]$clusterse <- runClusterRobustOLS(model_voteshare_fullsample_simple[[i]], dat_full$lfnr)
-# 1:1 matching, lm simple model with voting population weights
+# 1:1 matching, lm simple model with voting population weights * matching weights
 dat_match <- match.data.list[[i]]
 dat_match <- getDatMatch(dat.match = "dat_match", dat.orig = "county_df_long", election = i+1, treatment = "visit_10km")
-model_voteshare_matched_simple[[i]] <- lm(model_voteshare_formula_simple, data =  dat_match, weights = dat_match$gs)
+dat_match$combweights <- dat_match$gs  * dat_match$weights
+model_voteshare_matched_simple[[i]] <- lm(model_voteshare_formula_simple, data =  dat_match, weights = dat_match$combweights)
 model_voteshare_matched_simple[[i]]$clusterse <- runClusterRobustOLS(model_voteshare_matched_simple[[i]], dat_match$lfnr)
 }
 
@@ -321,10 +417,11 @@ for (i in 1:4) {
   dat_full <- getDatFull("county_df_long", election = i+1, treatment = "visit_10km")
   model_voteshare_kpd_fullsample_simple[[i]] <- lm(model_voteshare_kpd_formula_simple, data =  dat_full, weights = dat_full$gs)
   model_voteshare_kpd_fullsample_simple[[i]]$clusterse <- runClusterRobustOLS(model_voteshare_kpd_fullsample_simple[[i]], dat_full$lfnr)
-  # 1:1 matching, lm simple model with voting population weights
+  # 1:1 matching, lm simple model with voting population weights * matching weights
   dat_match <- match.data.list[[i]]
   dat_match <- getDatMatch(dat.match = "dat_match", dat.orig = "county_df_long", election = i+1, treatment = "visit_10km")
-  model_voteshare_kpd_matched_simple[[i]] <- lm(model_voteshare_kpd_formula_simple, data =  dat_match, weights = dat_match$gs)
+  dat_match$combweights <- dat_match$gs  * dat_match$weights
+  model_voteshare_kpd_matched_simple[[i]] <- lm(model_voteshare_kpd_formula_simple, data =  dat_match, weights = dat_match$combweights)
   model_voteshare_kpd_matched_simple[[i]]$clusterse <- runClusterRobustOLS(model_voteshare_kpd_matched_simple[[i]], dat_match$lfnr)
 }
 
@@ -337,10 +434,11 @@ for (i in 1:4) {
   dat_full <- getDatFull("county_df_long", election = i+1, treatment = "visit_10km")
   model_turnout_fullsample_simple[[i]] <- lm(model_turnout_formula_simple, data =  dat_full, weights = dat_full$wbht)
   model_turnout_fullsample_simple[[i]]$clusterse <- runClusterRobustOLS(model_turnout_fullsample_simple[[i]], dat_full$lfnr)
-  # 1:1 matching, lm simple model with voting population weights
+  # 1:1 matching, lm simple model with voting population weights * matching weights
   dat_match <- match.data.list[[i]]
   dat_match <- getDatMatch(dat.match = "dat_match", dat.orig = "county_df_long", election = i+1, treatment = "visit_10km")
-  model_turnout_matched_simple[[i]] <- lm(model_turnout_formula_simple, data =  dat_match, weights = dat_match$wbht)
+  dat_match$combweights <- dat_match$wbht  * dat_match$weights
+  model_turnout_matched_simple[[i]] <- lm(model_turnout_formula_simple, data =  dat_match, weights = dat_match$combweights)
   model_turnout_matched_simple[[i]]$clusterse <- runClusterRobustOLS(model_turnout_matched_simple[[i]], dat_match$lfnr)
 }
 
@@ -356,7 +454,8 @@ for (i in 1:4) {
   # 1:1 matching, lm simple model with voting population weights
   dat_match <- match.data.list[[i]]
   dat_match <- getDatMatch(dat.match = "dat_match", dat.orig = "county_df_long", election = i+1, treatment = "visit_10km")
-  model_members_matched_simple[[i]] <- lm(model_members_formula_simple, data =  dat_match,  weights = dat_match$gs)
+  dat_match$combweights <- dat_match$gs  * dat_match$weights
+  model_members_matched_simple[[i]] <- lm(model_members_formula_simple, data =  dat_match,  weights = dat_match$combweights)
   model_members_matched_simple[[i]]$clusterse <- runClusterRobustOLS(model_members_matched_simple[[i]], dat_match$lfnr)
 }
 
@@ -369,7 +468,8 @@ model_voteshare_pres_fullsample_simple$clusterse <- runClusterRobustOLS(model_vo
 # 1:1 matching, lm simple model with voting population weights
 dat_match <- match.data.pres
 dat_match <- getDatMatch(dat.match = "dat_match", dat.orig = "county_pres_df_long", election = 7, treatment = "visit_10km")
-model_voteshare_pres_matched_simple <- lm(model_voteshare_pres_formula_simple, data =  dat_match, weights = dat_match$gs)
+dat_match$combweights <- dat_match$gs  * dat_match$weights
+model_voteshare_pres_matched_simple <- lm(model_voteshare_pres_formula_simple, data =  dat_match, weights = dat_match$combweights)
 model_voteshare_pres_matched_simple$clusterse <- runClusterRobustOLS(model_voteshare_pres_matched_simple, dat_match$lfnr)
 
 # model Thaelmann vote share, presidential election
@@ -381,7 +481,8 @@ model_voteshare_thae_pres_fullsample_simple$clusterse <- runClusterRobustOLS(mod
 # 1:1 matching, lm simple model with voting population weights
 dat_match <- match.data.pres
 dat_match <- getDatMatch(dat.match = "dat_match", dat.orig = "county_pres_df_long", election = 7, treatment = "visit_10km")
-model_voteshare_thae_pres_matched_simple <- lm(model_voteshare_thae_pres_formula_simple, data =  dat_match, weights = dat_match$gs)
+dat_match$combweights <- dat_match$gs  * dat_match$weights
+model_voteshare_thae_pres_matched_simple <- lm(model_voteshare_thae_pres_formula_simple, data =  dat_match, weights = dat_match$combweights)
 model_voteshare_thae_pres_matched_simple$clusterse <- runClusterRobustOLS(model_voteshare_thae_pres_matched_simple, dat_match$lfnr)
 
 # model turnout, presidential election
@@ -393,7 +494,8 @@ model_turnout_pres_fullsample_simple$clusterse <- runClusterRobustOLS(model_turn
 # 1:1 matching, lm simple model with voting population weights
 dat_match <- match.data.pres
 dat_match <- getDatMatch(dat.match = "dat_match", dat.orig = "county_pres_df_long", election = 7, treatment = "visit_10km")
-model_turnout_pres_matched_simple <- lm(model_turnout_pres_formula_simple, data =  dat_match, weights = dat_match$wbht)
+dat_match$combweights <- dat_match$wbht  * dat_match$weights
+model_turnout_pres_matched_simple <- lm(model_turnout_pres_formula_simple, data =  dat_match, weights = dat_match$combweights)
 model_turnout_pres_matched_simple$clusterse <- runClusterRobustOLS(model_turnout_pres_matched_simple, dat_match$lfnr)
 
 # model NSDAP vote share, 1930 election, municipal data
@@ -405,7 +507,8 @@ model_voteshare_comm_fullsample_simple$clusterse <- runClusterRobustOLS(model_vo
 # 1:1 matching, lm simple model with voting population weights
 dat_match <- match.data.comm
 dat_match <- getDatMatch(dat.match = "dat_match", dat.orig = "community_df_long", election = 2, treatment = "visit_10km")
-model_voteshare_comm_matched_simple <- lm(model_voteshare_comm_formula_simple, data =  dat_match, weights = dat_match$gs)
+dat_match$combweights <- dat_match$gs  * dat_match$weights
+model_voteshare_comm_matched_simple <- lm(model_voteshare_comm_formula_simple, data =  dat_match, weights = dat_match$combweights)
 model_voteshare_comm_matched_simple$clusterse <- runClusterRobustOLS(model_voteshare_comm_matched_simple, dat_match$lfnr)
 
 # model KPD vote share, 1930 election, municipal data
@@ -417,7 +520,8 @@ model_voteshare_kpd_comm_fullsample_simple$clusterse <- runClusterRobustOLS(mode
 # 1:1 matching, lm simple model with voting population weights
 dat_match <- match.data.comm
 dat_match <- getDatMatch(dat.match = "dat_match", dat.orig = "community_df_long", election = 2, treatment = "visit_10km")
-model_voteshare_kpd_comm_matched_simple <- lm(model_voteshare_kpd_comm_formula_simple, data =  dat_match, weights = dat_match$gs)
+dat_match$combweights <- dat_match$gs  * dat_match$weights
+model_voteshare_kpd_comm_matched_simple <- lm(model_voteshare_kpd_comm_formula_simple, data =  dat_match, weights = dat_match$combweights)
 model_voteshare_kpd_comm_matched_simple$clusterse <- runClusterRobustOLS(model_voteshare_kpd_comm_matched_simple, dat_match$lfnr)
 
 # model turnout, 1930 election, municipal data
@@ -429,7 +533,8 @@ model_turnout_comm_fullsample_simple$clusterse <- runClusterRobustOLS(model_turn
 # 1:1 matching, lm simple model with voting population weights
 dat_match <- match.data.comm
 dat_match <- getDatMatch(dat.match = "dat_match", dat.orig = "community_df_long", election = 2, treatment = "visit_10km")
-model_turnout_comm_matched_simple <- lm(model_turnout_comm_formula_simple, data =  dat_match, weights = dat_match$gs)
+dat_match$combweights <- dat_match$wbht  * dat_match$weights
+model_turnout_comm_matched_simple <- lm(model_turnout_comm_formula_simple, data =  dat_match, weights = dat_match$combweights)
 model_turnout_comm_matched_simple$clusterse <- runClusterRobustOLS(model_turnout_comm_matched_simple, dat_match$lfnr)
 
 
@@ -461,15 +566,15 @@ obs <- c(length(model_voteshare_fullsample_simple[[1]]$residuals)/2,
          length(model_voteshare_fullsample_simple[[3]]$residuals)/2,
          length(model_voteshare_matched_simple[[3]]$residuals)/2,
          length(model_voteshare_fullsample_simple[[4]]$residuals)/2,
-         length(model_voteshare_matched_simple[[4]]$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}\\cmidrule(r){10-11}\\cmidrule(r){12-13}Exposure, 10km", "(Intercept)")
+         length(model_voteshare_matched_simple[[4]]$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}\\cmidrule(r){10-11}\\cmidrule(r){12-13}Time trend", "Base rate difference", "Exposure, 10km", "(Intercept)")
 election_names <- c("Sep 1930", "Sep 1930 (mun.)", "Apr 1932 (P)", "Jul 1932", "Nov 1932", "Mar 1933")
 effect_models_tex <- stargazer(model_voteshare_list, 
 dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
 omit.table.layout = "d",
 covariate.labels = varnames_long, 
 model.numbers = FALSE, 
-keep=c("Constant", "^timeXexposure"),
+keep=c("Constant", "^timeXexposure", "exposure", "time"),
 omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
 no.space = TRUE,
 df = FALSE, 
@@ -510,15 +615,15 @@ obs <- c(length(model_voteshare_kpd_fullsample_simple[[1]]$residuals)/2,
          length(model_voteshare_kpd_fullsample_simple[[3]]$residuals)/2,
          length(model_voteshare_kpd_matched_simple[[3]]$residuals)/2,
          length(model_voteshare_kpd_fullsample_simple[[4]]$residuals)/2,
-         length(model_voteshare_kpd_matched_simple[[4]]$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}\\cmidrule(r){10-11}\\cmidrule(r){12-13}Exposure, 10km", "(Intercept)")
+         length(model_voteshare_kpd_matched_simple[[4]]$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}\\cmidrule(r){10-11}\\cmidrule(r){12-13}Time trend", "Base rate difference", "Exposure, 10km", "(Intercept)")
 election_names <- c("Sep 1930", "Sep 1930 (mun.)", "Apr 1932 (P)", "Jul 1932", "Nov 1932", "Mar 1933")
 effect_models_tex <- stargazer(model_voteshare_kpd_list, 
                                dep.var.caption = "", #dep.var.caption = "KPD/Thälmann vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -559,15 +664,15 @@ obs <- c(length(model_turnout_fullsample_simple[[1]]$residuals)/2,
          length(model_turnout_fullsample_simple[[3]]$residuals)/2,
          length(model_turnout_matched_simple[[3]]$residuals)/2,
          length(model_turnout_fullsample_simple[[4]]$residuals)/2,
-         length(model_turnout_matched_simple[[4]]$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}\\cmidrule(r){10-11}\\cmidrule(r){12-13}Exposure, 10km", "(Intercept)")
+         length(model_turnout_matched_simple[[4]]$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}\\cmidrule(r){10-11}\\cmidrule(r){12-13}Time trend", "Base rate difference", "Exposure, 10km", "(Intercept)")
 election_names <- c("Sep 1930", "Sep 1930 (mun.)", "Apr 1932 (P)", "Jul 1932", "Nov 1932", "Mar 1933")
 effect_models_tex <- stargazer(model_turnout_list, 
                                dep.var.caption = "", #dep.var.caption = "Turnout", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 
@@ -582,7 +687,6 @@ effect_models_tex <- stargazer(model_turnout_list,
                                title = paste0("Effects of exposure to Hitler appearance on turnout.\\vspace{-.25cm}"), 
                                label = paste0("tab:turnout-dd"),
                                out = paste0("../figures/tab-effect-turnout-models.tex"))
-
 
 
 # export membership models
@@ -601,15 +705,15 @@ obs <- c(length(model_members_fullsample_simple[[1]]$residuals)/2,
          length(model_members_fullsample_simple[[3]]$residuals)/2,
          length(model_members_matched_simple[[3]]$residuals)/2,
          length(model_members_fullsample_simple[[4]]$residuals)/2,
-         length(model_members_matched_simple[[4]]$residuals)/2)
-varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Exposure, 10km", "(Intercept)")
+         length(model_members_matched_simple[[4]]$residuals)/2) %>% round
+varnames_long <- c("\\cmidrule(r){2-3}\\cmidrule(r){4-5}\\cmidrule(r){6-7}\\cmidrule(r){8-9}Time trend", "Base rate difference", "Exposure, 10km", "(Intercept)")
 election_names <- c("Sep 1930", "Jul 1932", "Nov 1932", "Mar 1933")
 effect_models_tex <- stargazer(model_members_list, 
                                dep.var.caption = "", #dep.var.caption = "NSDAP/Hitler vote share", 
                                omit.table.layout = "d",
                                covariate.labels = varnames_long, 
                                model.numbers = FALSE, 
-                               keep=c("Constant", "^timeXexposure"),
+                               keep=c("Constant", "^timeXexposure", "exposure", "time"),
                                omit.stat = c("rsq", "res.dev", "ser", "n", "f"),
                                no.space = TRUE,
                                df = FALSE, 

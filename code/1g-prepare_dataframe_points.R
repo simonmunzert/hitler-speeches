@@ -14,9 +14,6 @@ c("elections_geopoints_df.RData")
 c("community_df_pointdata_long.RData",
   "county_df_pointdata_long.RData",
   "county_pres_df_pointdata_long.RData",
-  "community_df_pointdata_long.dta",
-  "county_df_pointdata_long.dta",
-  "county_pres_df_pointdata_long.dta",
   "elections_all_df_pointdata_long.RData")
 
 
@@ -28,15 +25,6 @@ source("functions.r")
 ## import prepared data --------------------------
 load("elections_geopoints_df.RData")
 elections_df <- elections_geo_df
-
-table(elections_df$election)
-# elections and indices
-# 0 = Reichstag election 1924
-# 1 = Reichstag election 1928
-# 2 = Reichstag election 1930
-# 3 = Reichstag election 1932_1
-# 4 = Reichstag election 1932_2
-# 5 = Reichstag election 1933
 
 
 # rename variables -------------------------------
@@ -93,7 +81,7 @@ elections_df <- rename.vars(elections_df, varnames_df$varnames_orig, varnames_df
 
 
 ## drop unneeded variables -----------------------------------
-elections_df <- elections_df[,names(elections_df)[!str_detect(names(elections_df), "^n206|^n245|^n_|^coords|landw25|landw33|alos33")]]
+elections_df <- elections_df[,names(elections_df)[!str_detect(names(elections_df), "^n206|^n245|^n_|^coords")]]
 
 
 ## reshape data frame to long format -------------------------
@@ -182,6 +170,18 @@ elections_df <- mutate(elections_df,
 elections_df_long <- reshape(elections_df, varying = varying_vars, timevar = "election", idvar = "lfnr", times = 0:7, direction = "long", sep = "")
 elections_df_long <- arrange(elections_df_long, krnr, lfnr, election)
 
+table(elections_df_long$election)
+# elections and indices
+# 0 = Reichstag election 1924
+# 1 = Reichstag election 1928
+# 2 = Reichstag election 1930
+# 3 = Reichstag election 1932_1
+# 4 = Reichstag election 1932_2
+# 5 = Reichstag election 1933
+# 6 = Presidential election 1932, first round
+# 7 = Presidential election 1932, second round
+
+
 
 
 # re-express votes as proportions of eligibles (not voters!) ---------------------------
@@ -192,7 +192,7 @@ elections_df_long[,iffer] <- sapply(elections_df_long[,iffer], function(x) ifels
 
 # proportions
 elections_df_long <- mutate(elections_df_long, 
-                            p_dnvp = dnvp/wb,
+                            p_dnvp = dnvp/wb, # wb: proportions with reference to number of eligibles
                             p_dvp = dvp/wb,
                             p_zentrum = zentrum/wb,
                             p_ddp = ddp/wb,
@@ -205,7 +205,7 @@ elections_df_long <- mutate(elections_df_long,
                             p_hitl = hitl/wb,
                             p_thae = thae/wb,
                             p_wint = wint/wb,
-                            p_nsdap_as = nsdap/as,
+                            p_nsdap_as = nsdap/as, # as: proportions with reference to total number of votes
                             p_kpd_as = kpd/as,
                             p_hitl_as = hitl/as,
                             p_thae_as = thae/as)
@@ -218,46 +218,52 @@ elections_df_long$p_members <- (elections_df_long$members / elections_df_long$wb
 
 
 # re-express outcomes as differences -------------------------
-elections_df_long$d_p_turnout <- by(elections_df_long$p_turnout, as.factor(elections_df_long$krnr), diff_x) %>% unlist() %>% as.numeric()
-elections_df_long$d_p_nsdap <- by(elections_df_long$p_nsdap, as.factor(elections_df_long$krnr), diff_x) %>% unlist() %>% as.numeric()
-elections_df_long$d_p_kpd <- by(elections_df_long$p_kpd, as.factor(elections_df_long$krnr), diff_x) %>% unlist() %>% as.numeric()
-elections_df_long$d_p_hitl <- by(elections_df_long$p_hitl, as.factor(elections_df_long$krnr), diff_x) %>% unlist() %>% as.numeric()
-elections_df_long$d_p_hind <- by(elections_df_long$p_hind, as.factor(elections_df_long$krnr), diff_x) %>% unlist() %>% as.numeric()
-elections_df_long$d_p_thae <- by(elections_df_long$p_thae, as.factor(elections_df_long$krnr), diff_x) %>% unlist() %>% as.numeric()
-elections_df_long$d_p_members <- by(elections_df_long$p_members, as.factor(elections_df_long$krnr), diff_x) %>% unlist() %>% as.numeric()
-elections_df_long$d_members <- by(elections_df_long$members, as.factor(elections_df_long$krnr), diff_x) %>% unlist() %>% as.numeric()
-# also: grouping by community level identificator (lfnr) for 1930 election analysis
-elections_df_long$d_p_turnout_comm <- by(elections_df_long$p_turnout, as.factor(elections_df_long$lfnr), diff_x) %>% unlist() %>% as.numeric()
-elections_df_long$d_p_nsdap_comm <- by(elections_df_long$p_nsdap, as.factor(elections_df_long$lfnr), diff_x) %>% unlist() %>% as.numeric()
-elections_df_long$d_p_kpd_comm <- by(elections_df_long$p_kpd, as.factor(elections_df_long$lfnr), diff_x) %>% unlist() %>% as.numeric()
+# note: by grouping on lfnr only, some of the differences are meaningless because the election indicator combines presidential and parliamentary elections. therefore, they have to be manually set to missing 
+# grouping by district indicator (lfnr)
+elections_df_long$d_p_turnout <- by(elections_df_long$p_turnout, as.factor(elections_df_long$lfnr), diff_x) %>% unlist() %>% as.numeric()
+elections_df_long$d_p_turnout[elections_df_long$election == 6] <- NA
+elections_df_long$d_p_nsdap <- by(elections_df_long$p_nsdap, as.factor(elections_df_long$lfnr), diff_x) %>% unlist() %>% as.numeric()
+elections_df_long$d_p_nsdap[elections_df_long$election == 0 | elections_df_long$election == 6] <- NA
+elections_df_long$d_p_kpd <- by(elections_df_long$p_kpd, as.factor(elections_df_long$lfnr), diff_x) %>% unlist() %>% as.numeric()
+elections_df_long$d_p_kpd[elections_df_long$election == 0 | elections_df_long$election == 6] <- NA
+elections_df_long$d_p_hitl <- by(elections_df_long$p_hitl, as.factor(elections_df_long$lfnr), diff_x) %>% unlist() %>% as.numeric()
+elections_df_long$d_p_hitl[elections_df_long$election == 0 | elections_df_long$election == 6] <- NA
+elections_df_long$d_p_hind <- by(elections_df_long$p_hind, as.factor(elections_df_long$lfnr), diff_x) %>% unlist() %>% as.numeric()
+elections_df_long$d_p_hind[elections_df_long$election == 0 | elections_df_long$election == 6] <- NA
+elections_df_long$d_p_thae <- by(elections_df_long$p_thae, as.factor(elections_df_long$lfnr), diff_x) %>% unlist() %>% as.numeric()
+elections_df_long$d_p_thae[elections_df_long$election == 0 | elections_df_long$election == 6] <- NA
+elections_df_long$d_p_members <- by(elections_df_long$p_members, as.factor(elections_df_long$lfnr), diff_x) %>% unlist() %>% as.numeric()
+elections_df_long$d_p_members[elections_df_long$election == 0 | elections_df_long$election == 6] <- NA
+elections_df_long$d_members <- by(elections_df_long$members, as.factor(elections_df_long$lfnr), diff_x) %>% unlist() %>% as.numeric()
+elections_df_long$d_members[elections_df_long$election == 0 | elections_df_long$election == 6] <- NA
 
 
 # generate lag variables -------------------------------------
-elections_df_long$l_p_turnout <- by(elections_df_long$p_turnout, as.factor(elections_df_long$krnr), lag) %>% unlist() %>% as.numeric()
-elections_df_long$l_p_nsdap <- by(elections_df_long$p_nsdap, as.factor(elections_df_long$krnr), lag) %>% unlist() %>% as.numeric()
-elections_df_long$l_p_kpd <- by(elections_df_long$p_kpd, as.factor(elections_df_long$krnr), lag) %>% unlist() %>% as.numeric()
-elections_df_long$l_p_hitl <- by(elections_df_long$p_hitl, as.factor(elections_df_long$krnr), lag) %>% unlist() %>% as.numeric()
-elections_df_long$l_p_hind <- by(elections_df_long$p_hind, as.factor(elections_df_long$krnr), lag) %>% unlist() %>% as.numeric()
-elections_df_long$l_p_thae <- by(elections_df_long$p_thae, as.factor(elections_df_long$krnr), lag) %>% unlist() %>% as.numeric()
-elections_df_long$l1_visit_5km <- by(elections_df_long$visit_5km, as.factor(elections_df_long$krnr), lag) %>% unlist() %>% as.numeric()
-elections_df_long$l1_visit_10km <- by(elections_df_long$visit_10km, as.factor(elections_df_long$krnr), lag) %>% unlist() %>% as.numeric()
-elections_df_long$l1_visit_25km <- by(elections_df_long$visit_25km, as.factor(elections_df_long$krnr), lag) %>% unlist() %>% as.numeric()
-elections_df_long$l1_visit_50km <- by(elections_df_long$visit_50km, as.factor(elections_df_long$krnr), lag) %>% unlist() %>% as.numeric()
+elections_df_long$l_p_turnout <- by(elections_df_long$p_turnout, as.factor(elections_df_long$lfnr), dplyr::lag) %>% unlist() %>% as.numeric()
+elections_df_long$l_p_nsdap <- by(elections_df_long$p_nsdap, as.factor(elections_df_long$lfnr), dplyr::lag) %>% unlist() %>% as.numeric()
+elections_df_long$l_p_kpd <- by(elections_df_long$p_kpd, as.factor(elections_df_long$lfnr), dplyr::lag) %>% unlist() %>% as.numeric()
+elections_df_long$l_p_hitl <- by(elections_df_long$p_hitl, as.factor(elections_df_long$lfnr), dplyr::lag) %>% unlist() %>% as.numeric()
+elections_df_long$l_p_hind <- by(elections_df_long$p_hind, as.factor(elections_df_long$lfnr), dplyr::lag) %>% unlist() %>% as.numeric()
+elections_df_long$l_p_thae <- by(elections_df_long$p_thae, as.factor(elections_df_long$lfnr), dplyr::lag) %>% unlist() %>% as.numeric()
+elections_df_long$l1_visit_5km <- by(elections_df_long$visit_5km, as.factor(elections_df_long$lfnr), dplyr::lag) %>% unlist() %>% as.numeric()
+elections_df_long$l1_visit_10km <- by(elections_df_long$visit_10km, as.factor(elections_df_long$lfnr), dplyr::lag) %>% unlist() %>% as.numeric()
+elections_df_long$l1_visit_25km <- by(elections_df_long$visit_25km, as.factor(elections_df_long$lfnr), dplyr::lag) %>% unlist() %>% as.numeric()
+elections_df_long$l1_visit_50km <- by(elections_df_long$visit_50km, as.factor(elections_df_long$lfnr), dplyr::lag) %>% unlist() %>% as.numeric()
 
-elections_df_long$l2_visit_5km <- by(elections_df_long$visit_5km, as.factor(elections_df_long$krnr), lag, n = 2) %>% unlist() %>% as.numeric()
-elections_df_long$l2_visit_10km <- by(elections_df_long$visit_10km, as.factor(elections_df_long$krnr), lag, n = 2) %>% unlist() %>% as.numeric()
-elections_df_long$l2_visit_25km <- by(elections_df_long$visit_25km, as.factor(elections_df_long$krnr), lag, n = 2) %>% unlist() %>% as.numeric()
-elections_df_long$l2_visit_50km <- by(elections_df_long$visit_50km, as.factor(elections_df_long$krnr), lag, n = 2) %>% unlist() %>% as.numeric()
+elections_df_long$l2_visit_5km <- by(elections_df_long$visit_5km, as.factor(elections_df_long$lfnr), dplyr::lag, n = 2) %>% unlist() %>% as.numeric()
+elections_df_long$l2_visit_10km <- by(elections_df_long$visit_10km, as.factor(elections_df_long$lfnr), dplyr::lag, n = 2) %>% unlist() %>% as.numeric()
+elections_df_long$l2_visit_25km <- by(elections_df_long$visit_25km, as.factor(elections_df_long$lfnr), dplyr::lag, n = 2) %>% unlist() %>% as.numeric()
+elections_df_long$l2_visit_50km <- by(elections_df_long$visit_50km, as.factor(elections_df_long$lfnr), dplyr::lag, n = 2) %>% unlist() %>% as.numeric()
 
-elections_df_long$l3_visit_5km <- by(elections_df_long$visit_5km, as.factor(elections_df_long$krnr), lag, n = 3) %>% unlist() %>% as.numeric()
-elections_df_long$l3_visit_10km <- by(elections_df_long$visit_10km, as.factor(elections_df_long$krnr), lag, n = 3) %>% unlist() %>% as.numeric()
-elections_df_long$l3_visit_25km <- by(elections_df_long$visit_25km, as.factor(elections_df_long$krnr), lag, n = 3) %>% unlist() %>% as.numeric()
-elections_df_long$l3_visit_50km <- by(elections_df_long$visit_50km, as.factor(elections_df_long$krnr), lag, n = 3) %>% unlist() %>% as.numeric()
+elections_df_long$l3_visit_5km <- by(elections_df_long$visit_5km, as.factor(elections_df_long$lfnr), dplyr::lag, n = 3) %>% unlist() %>% as.numeric()
+elections_df_long$l3_visit_10km <- by(elections_df_long$visit_10km, as.factor(elections_df_long$lfnr), dplyr::lag, n = 3) %>% unlist() %>% as.numeric()
+elections_df_long$l3_visit_25km <- by(elections_df_long$visit_25km, as.factor(elections_df_long$lfnr), dplyr::lag, n = 3) %>% unlist() %>% as.numeric()
+elections_df_long$l3_visit_50km <- by(elections_df_long$visit_50km, as.factor(elections_df_long$lfnr), dplyr::lag, n = 3) %>% unlist() %>% as.numeric()
 
-elections_df_long$l4_visit_5km <- by(elections_df_long$visit_5km, as.factor(elections_df_long$krnr), lag, n = 4) %>% unlist() %>% as.numeric()
-elections_df_long$l4_visit_10km <- by(elections_df_long$visit_10km, as.factor(elections_df_long$krnr), lag, n = 4) %>% unlist() %>% as.numeric()
-elections_df_long$l4_visit_25km <- by(elections_df_long$visit_25km, as.factor(elections_df_long$krnr), lag, n = 4) %>% unlist() %>% as.numeric()
-elections_df_long$l4_visit_50km <- by(elections_df_long$visit_50km, as.factor(elections_df_long$krnr), lag, n = 4) %>% unlist() %>% as.numeric()
+elections_df_long$l4_visit_5km <- by(elections_df_long$visit_5km, as.factor(elections_df_long$lfnr), dplyr::lag, n = 4) %>% unlist() %>% as.numeric()
+elections_df_long$l4_visit_10km <- by(elections_df_long$visit_10km, as.factor(elections_df_long$lfnr), dplyr::lag, n = 4) %>% unlist() %>% as.numeric()
+elections_df_long$l4_visit_25km <- by(elections_df_long$visit_25km, as.factor(elections_df_long$lfnr), dplyr::lag, n = 4) %>% unlist() %>% as.numeric()
+elections_df_long$l4_visit_50km <- by(elections_df_long$visit_50km, as.factor(elections_df_long$lfnr), dplyr::lag, n = 4) %>% unlist() %>% as.numeric()
 
 elections_df_long$l_visit_5km <- apply(elections_df_long[,c("l1_visit_5km", "l2_visit_5km", "l3_visit_5km", "l4_visit_5km")], 1, max, na.rm = TRUE)
 elections_df_long$l_visit_5km[is.infinite(elections_df_long$l_visit_5km)] <- NA
@@ -268,56 +274,11 @@ elections_df_long$l_visit_25km[is.infinite(elections_df_long$l_visit_25km)] <- N
 elections_df_long$l_visit_50km <- apply(elections_df_long[,c("l1_visit_50km", "l2_visit_50km", "l3_visit_50km", "l4_visit_50km")], 1, max, na.rm = TRUE)
 elections_df_long$l_visit_50km[is.infinite(elections_df_long$l_visit_50km)] <- NA
 
-# also: grouping by community level identificator (lfnr) for 1930 election analysis
-elections_df_long$l_p_turnout_comm <- by(elections_df_long$p_turnout, as.factor(elections_df_long$lfnr), lag) %>% unlist() %>% as.numeric()
-elections_df_long$l_p_nsdap_comm <- by(elections_df_long$p_nsdap, as.factor(elections_df_long$lfnr), lag) %>% unlist() %>% as.numeric()
-elections_df_long$l_p_kpd_comm <- by(elections_df_long$p_kpd, as.factor(elections_df_long$lfnr), lag) %>% unlist() %>% as.numeric()
-elections_df_long$l1_visit_5km_comm <- by(elections_df_long$visit_5km, as.factor(elections_df_long$lfnr), lag) %>% unlist() %>% as.numeric()
-elections_df_long$l1_visit_10km_comm <- by(elections_df_long$visit_10km, as.factor(elections_df_long$lfnr), lag) %>% unlist() %>% as.numeric()
-elections_df_long$l1_visit_25km_comm <- by(elections_df_long$visit_25km, as.factor(elections_df_long$lfnr), lag) %>% unlist() %>% as.numeric()
-elections_df_long$l1_visit_50km_comm <- by(elections_df_long$visit_50km, as.factor(elections_df_long$lfnr), lag) %>% unlist() %>% as.numeric()
-elections_df_long$l2_visit_5km_comm <- by(elections_df_long$visit_5km, as.factor(elections_df_long$lfnr), lag, n = 2) %>% unlist() %>% as.numeric()
-elections_df_long$l2_visit_10km_comm <- by(elections_df_long$visit_10km, as.factor(elections_df_long$lfnr), lag, n = 2) %>% unlist() %>% as.numeric()
-elections_df_long$l2_visit_25km_comm <- by(elections_df_long$visit_25km, as.factor(elections_df_long$lfnr), lag, n = 2) %>% unlist() %>% as.numeric()
-elections_df_long$l2_visit_50km_comm <- by(elections_df_long$visit_50km, as.factor(elections_df_long$lfnr), lag, n = 2) %>% unlist() %>% as.numeric()
-elections_df_long$l3_visit_5km_comm <- by(elections_df_long$visit_5km, as.factor(elections_df_long$lfnr), lag, n = 3) %>% unlist() %>% as.numeric()
-elections_df_long$l3_visit_10km_comm <- by(elections_df_long$visit_10km, as.factor(elections_df_long$lfnr), lag, n = 3) %>% unlist() %>% as.numeric()
-elections_df_long$l3_visit_25km_comm <- by(elections_df_long$visit_25km, as.factor(elections_df_long$lfnr), lag, n = 3) %>% unlist() %>% as.numeric()
-elections_df_long$l3_visit_50km_comm <- by(elections_df_long$visit_50km, as.factor(elections_df_long$lfnr), lag, n = 3) %>% unlist() %>% as.numeric()
-elections_df_long$l4_visit_5km_comm <- by(elections_df_long$visit_5km, as.factor(elections_df_long$lfnr), lag, n = 4) %>% unlist() %>% as.numeric()
-elections_df_long$l4_visit_10km_comm <- by(elections_df_long$visit_10km, as.factor(elections_df_long$lfnr), lag, n = 4) %>% unlist() %>% as.numeric()
-elections_df_long$l4_visit_25km_comm <- by(elections_df_long$visit_25km, as.factor(elections_df_long$lfnr), lag, n = 4) %>% unlist() %>% as.numeric()
-elections_df_long$l4_visit_50km_comm <- by(elections_df_long$visit_50km, as.factor(elections_df_long$lfnr), lag, n = 4) %>% unlist() %>% as.numeric()
-
-elections_df_long$l_visit_5km_comm <- apply(elections_df_long[,c("l1_visit_5km_comm", "l2_visit_5km_comm", "l3_visit_5km_comm", "l4_visit_5km_comm")], 1, max, na.rm = TRUE)
-elections_df_long$l_visit_5km_comm[is.infinite(elections_df_long$l_visit_5km_comm)] <- NA
-elections_df_long$l_visit_10km_comm <- apply(elections_df_long[,c("l1_visit_10km_comm", "l2_visit_10km_comm", "l3_visit_10km_comm", "l4_visit_10km_comm")], 1, max, na.rm = TRUE)
-elections_df_long$l_visit_10km_comm[is.infinite(elections_df_long$l_visit_10km_comm)] <- NA
-elections_df_long$l_visit_25km_comm <- apply(elections_df_long[,c("l1_visit_25km_comm", "l2_visit_25km_comm", "l3_visit_25km_comm", "l4_visit_25km_comm")], 1, max, na.rm = TRUE)
-elections_df_long$l_visit_25km_comm[is.infinite(elections_df_long$l_visit_25km_comm)] <- NA
-elections_df_long$l_visit_50km_comm <- apply(elections_df_long[,c("l1_visit_50km_comm", "l2_visit_50km_comm", "l3_visit_50km_comm", "l4_visit_50km_comm")], 1, max, na.rm = TRUE)
-elections_df_long$l_visit_50km_comm[is.infinite(elections_df_long$l_visit_50km_comm)] <- NA
-
-
-
-# generate volatility variable ---------------------------------
-elections_df_long$d1_p_dnvp <- func_volatility("p_dnvp")
-elections_df_long$d1_p_dvp <- func_volatility("p_dvp")
-elections_df_long$d1_p_zentrum <- func_volatility("p_zentrum")
-elections_df_long$d1_p_ddp <- func_volatility("p_ddp")
-elections_df_long$d1_p_spd <- func_volatility("p_spd")
-elections_df_long$d1_p_uspd <- func_volatility("p_uspd")
-elections_df_long$d1_p_kpd <- func_volatility("p_kpd")
-elections_df_long$d1_p_nsdap <- func_volatility("p_nsdap")
-elections_df_long$d1_sum <- rowSums(elections_df_long[,c("d1_p_dnvp", "d1_p_dvp", "d1_p_zentrum", "d1_p_ddp", "d1_p_spd", "d1_p_uspd", "d1_p_kpd", "d1_p_nsdap")], na.rm = TRUE)
-elections_df_long$volatility <- elections_df_long$d1_sum/2
-elections_df_long <- elections_df_long[,!(names(elections_df_long) %in% c("d1_p_dnvp", "d1_p_dvp", "d1_p_zentrum", "d1_p_ddp", "d1_p_spd", "d1_p_uspd", "d1_p_kpd", "d1_p_nsdap", "d1_sum"))]
-
 
 # generate competitiveness of previous election variables -------------
 
 # primary districts
-elections_df_long$l_nsdap <- by(elections_df_long$nsdap, as.factor(elections_df_long$krnr), lag) %>% unlist() %>% as.numeric()
+elections_df_long$l_nsdap <- by(elections_df_long$nsdap, as.factor(elections_df_long$krnr), dplyr::lag) %>% unlist() %>% as.numeric()
 l_nsdap_df <- aggregate(l_nsdap~wkr+election, data=elections_df_long, sum, na.rm=TRUE)
 l_nsdap_df <- rename.vars(l_nsdap_df, "l_nsdap", "wkr_nstotal0")
 elections_df_long <- merge(elections_df_long, l_nsdap_df, by = c("wkr", "election"), all.x = TRUE)
@@ -409,7 +370,6 @@ elections_df_long <- elections_df_long[elections_df_long$election != 0,]
 
 
 
-
 # create different data frames for analysis ----------------
 
 # inspect population size at various aggregation levels
@@ -436,10 +396,33 @@ sum(county_df_long$pop[county_df_long$election == 2], na.rm = TRUE)
 county_pres_df_long <- filter(elections_df_long, str_detect(agglvl, "stadtkreise|KREISE M.GEMEINDEN >|KREISE O\\.GEMEINDEN"))
 county_pres_df_long <- filter(county_pres_df_long, election == 6 | election == 7)
 sum(county_pres_df_long$pop[county_pres_df_long$election == 7], na.rm = TRUE)
-county_pres_df_long$wkr_nslast <- NULL # delete Competitiveness variable; causes missingness problems and is not necessary in this model
+county_pres_df_long$wkr_nslast <- NULL # delete competitiveness variable; causes missingness problems and is not necessary in this model
+
+
+
 
 
 # drop election-wise incomplete cases --------------
+
+# available social context variables:
+  # c("landw25", "landw33", "alos33", "prot25", "arbei25", "arbei33")
+# social context variables with moderate missingness rates:
+  # county_df_long: c("landw25", "prot25", "arbei25")
+  # county_pres_df_long: no significant missingness rates
+  # community_df_long: c("landw33", "prot25")
+
+#community_df_long <- community_df_long[,!(names(community_df_long) %in% c("landw25", "alos33", "arbei25", "arbei33"))] # exclude social context variables that are incomplete at community level
+
+#county_df_long <- county_df_long[,!(names(county_df_long) %in% c("landw33", "alos33",  "arbei33"))] # exclude social context variables that show higher rates of missingness at county level are incomplete at county level
+
+#county_pres_df_long <- county_pres_df_long[,!(names(county_pres_df_long) %in% c("landw25", "arbei25",  "arbei33"))] # exclude social context variables that show higher rates of missingness at county level are incomplete at county level (THIS STEP IS PROBABLY NOT NECESSARY; NOT VERY MANY MISSINGS HERE)
+
+## drop all social context variables; not needed
+community_df_long <- community_df_long[,!(names(community_df_long) %in% c("landw25", "landw33", "alos33", "prot25", "arbei25", "arbei33"))] 
+county_df_long <- county_df_long[,!(names(county_df_long) %in% c("landw25", "landw33", "alos33", "prot25", "arbei25", "arbei33"))] 
+county_pres_df_long <- county_pres_df_long[,!(names(county_pres_df_long) %in% c("landw25", "landw33", "alos33", "prot25", "arbei25", "arbei33"))] 
+
+
 community_df_long_complete_list <- list()
 for (i in 1:2) {
 	dat_filter <- filter(community_df_long, election == i)
@@ -490,12 +473,6 @@ county_pres_df_long <- arrange(county_pres_df_long, krnr, lfnr, election)
 save(community_df_long, file = "community_df_pointdata_long.RData")
 save(county_df_long, file = "county_df_pointdata_long.RData")
 save(county_pres_df_long, file = "county_pres_df_pointdata_long.RData")
-
-
-# Stata export
-write.dta(community_df_long, file = "community_df_pointdata_long.dta", version = 10)
-write.dta(county_df_long, file = "county_df_pointdata_long.dta", version = 10)
-write.dta(county_df_long, file = "county_pres_df_pointdata_long.dta", version = 10)
 
 # export full data frame
 elections_df_long <- arrange(elections_df_long, krnr, lfnr, election)

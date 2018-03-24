@@ -1,0 +1,29 @@
+## modifications done so far (everything in GitHub archive)
+	# 1f-prepare_merging_data.r
+		# imported sociodemographic data
+	# 1g-prepare_dataframe_points.r
+		# drop election-wise incomplete cases: took varying missingness on social variables into account; probably undo this when these variables are not used!
+	# 3a-analyze-pointdata.r:
+		# modified matching strategy
+		# modified function getDatMatch() to drop single case observations and adapt weights
+		# added combined weights (weights from matching * population weights)
+	# 3b-analyze-pointdata-robustness.r:
+		# worked with updated performMatch() function
+		# updated computations for geographic scope of events
+
+
+## to do's:
+	# 1:many match, caliper oder k nearest neighbors
+	# DID-Tabellen vollständig berichten
+	# Sozio-Variablen dranmatchen, ins PS-Modell aufnehmen
+	# Anekdoten zusammentragen
+	# neue AVAR: Mitgliederzahlen (auch wg. posttreatment bias)
+
+## matching procedure:
+  # replace --> FALSE: all weights remain 1 (this is what we want to easily introduce the population weights, right?)
+  # ratio: up to 20, 30: reduces number of unmatched controls. no unmatched treateds, but: weights for repeatedly sampled controls vary a lot
+  # added caliper to reduce matching across large distances
+ 
+## social context variables
+	# added indicators for shares of (1) workers, (2) protestants, (3) people employed in agriculture
+	
