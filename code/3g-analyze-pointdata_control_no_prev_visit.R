@@ -23,6 +23,7 @@ source("functions-analysis.r")
 
 ## import prepared data --------------------------
 load("county_df_pointdata_long.RData")
+load("county_pres_df_pointdata_long.RData")
 load("community_df_pointdata_long.RData")
 varnames_tab <- read.csv("varnames_labels.csv", stringsAsFactors = FALSE, sep = ",")
 
@@ -131,6 +132,11 @@ for (i in c(1, 6, 5, 2, 3, 4)) {
   dat_treated_matched <- match_dat$distance[match_dat$treated == TRUE & match_dat$matched == TRUE & !is.na(match_dat$id_var_match)  & match_dat$id_var_match != -1]
   dat_untreated_matched <- match_dat$distance_match[match_dat$treated == TRUE & match_dat$matched == TRUE & !is.na(match_dat$id_var_match) & match_dat$id_var_match != -1] # look out; treated == TRUE is correct because we look at distance_match variable!
   dat_untreated_unmatched <- match_dat$distance[match_dat$treated == FALSE & match_dat$matched == FALSE & match_dat$buffer == 0]
+  
+  dat_untreated_discarded <- match_dat$distance[match_dat$treated == 0 & match_dat$matched == 1 & (match_dat$l_visit_10km == 1 | match_dat$goebbels_10kmTRUE == 1)]
+  
+  dat_treated_discarded <- match_dat$treated == 0 & match_dat$matched == 1 & (match_dat$l_visit_10km == 1 | match_dat$goebbels_10kmTRUE == 1)
+  
   set.seed(123)
   dat_treated_unmatched_x <- rnorm(length(dat_treated_unmatched), 0, .02)
   dat_treated_matched_x <- rnorm(length(dat_treated_matched), 1, .02)

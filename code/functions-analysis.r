@@ -67,6 +67,7 @@ matchDatFunMatrix <- function(i, dat) {
     rownames(dat) <- 1:nrow(dat)    
   }
   match_dat <- data.frame(id_var = rownames(dat[dat$election == i+1,]), treated = model.out.list[[i]]$treat, discarded = model.out.list[[i]]$discarded, distance = model.out.list[[i]]$distance)
+  match_dat <- cbind(match_dat, model.out.list[[i]]$X)
   # create buffer variable
   treat_var <- model.out.list[[i]]$formula %>% char() %>% .[2]
   buffer_var <- paste0(treat_var, "_nomatch")
