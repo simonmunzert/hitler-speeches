@@ -12,7 +12,10 @@ c("county_df_pointdata_long.RData",
   "community_df_pointdata_long.RData")
 
 ## exports
-c()
+c("../figures/tab-effect-voteshare-models-radius.tex",
+  "../figures/tab-effect-voteshare-kpd-models-radius.tex",
+  "../figures/tab-effect-turnout-models-radius.tex",
+  "../figures/effects_coefplot_municip_radius.pdf")
 
 
 ## load packages and functions -------------------

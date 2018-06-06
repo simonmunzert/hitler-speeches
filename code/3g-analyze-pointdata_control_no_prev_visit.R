@@ -12,7 +12,11 @@ c("county_df_pointdata_long.RData",
   "community_df_pointdata_long.RData")
 
 ## exports
-c()
+c("../figures/propscores_jitterplot-control-no-prev-visit.pdf",
+  "../figures/tab-effect-voteshare-models-control-no-prev-visit.tex",
+  "../figures/tab-effect-voteshare-kpd-models-control-no-prev-visit.tex",
+  "../figures/tab-effect-turnout-models-control-no-prev-visit.tex",
+  "../figures/effects_coefplot_control-no-prev-visit.pdf")
 
 
 ## load packages and functions -------------------

@@ -12,7 +12,19 @@ c("county_df_pointdata_long.RData",
   "community_df_pointdata_long.RData")
 
 ## exports
-c()
+c("../figures/tab-effect-voteshare-models-countysize-1930.tex",
+  "../figures/tab-effect-voteshare-kpd-models-countysize-1930.tex",
+  "../figures/tab-effect-turnout-models-countysize-1930.tex",
+  "../figures/tab-effect-voteshare-models-countysize-1932-1.tex",
+  "../figures/tab-effect-voteshare-kpd-models-countysize-1932-1.tex",
+  "../figures/tab-effect-turnout-models-countysize-1932-1.tex",
+  "../figures/tab-effect-voteshare-models-countysize-1932-2.tex",
+  "../figures/tab-effect-voteshare-kpd-models-countysize-1932-2.tex",
+  "../figures/tab-effect-turnout-models-countysize-1932-2.tex",
+  "../figures/tab-effect-voteshare-models-countysize-1933.tex",
+  "../figures/tab-effect-voteshare-kpd-models-countysize-1933.tex",
+  "../figures/tab-effect-turnout-models-countysize-1933.tex",
+  "../figures/effects_coefplot_countysize.pdf")
 
 
 ## load packages and functions -------------------
