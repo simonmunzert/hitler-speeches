@@ -4,7 +4,7 @@ This repository provides replication materials for the paper "Examining a Most L
 
 ## Paper
 The current version of the corresponding working paper can be accessed here:
-https://github.com/simonmunzert/hitler-speeches/raw/master/SelbMunzert_Hitler_Speeches.pdf
+https://github.com/simonmunzert/hitler-speeches/raw/master/preprint.pdf
 
 
 ## Abstract
@@ -35,14 +35,14 @@ D-78457 Konstanz, Germany
 
 Email: peter.selb@uni.kn
 
-<br><br>
+<br>
 
 **Simon Munzert** (repository maintainer)
 
-University of Mannheim
+Hertie School of Governance
 
-Mannheim Centre for European Social Research
+Friedrichstr. 180
 
-D-68131 Mannheim, Germany
+D-10117 Berlin, Germany
 
-E-mail: simon.munzert@mzes.uni-mannheim.de
+E-mail: munzert@hertie-school.org
